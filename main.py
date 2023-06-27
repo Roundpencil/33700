@@ -17,7 +17,6 @@ class Application(tk.Frame):
         self.filepath = ""
         self.master.title("La moulinette 33700 de l'af2m")
 
-
     def create_widgets(self):
         self.lbl1 = tk.Label(self, text="1. Choisissez le fichier d'entrée CSV : (aucun fichier)")
         self.lbl1.grid(row=0, column=0, sticky='w')
@@ -60,37 +59,41 @@ class Application(tk.Frame):
     def convert(self):  # sourcery skip: use-named-expression
         if self.filepath:
             # try:
-                # Load and process the CSV
-                # df = pd.read_csv(self.filepath, delimiter=';', encoding='ISO-8859-1')
-                df = pd.read_csv(self.filepath, delimiter=';', encoding='ISO-8859-1', dtype={'EMETTEUR': str, 'ALIAS_SIGNALANT': str})
-                df.replace({re.compile(r'[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]'): ''}, regex=True, inplace=True)
-                df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '').str.rstrip('.0')
+            # Load and process the CSV
+            # df = pd.read_csv(self.filepath, delimiter=';', encoding='ISO-8859-1', dtype={'EMETTEUR': str, 'ALIAS_SIGNALANT': str})
+            df = pd.read_csv(self.filepath, delimiter=';', encoding='ISO-8859-1', dtype=str)
+            df.replace({re.compile(r'[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]'): ''}, regex=True, inplace=True)
+            df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '').str.rstrip('.0')
 
-                # Charger la liste OADC
-                try:
-                    df_oadc = pd.read_csv('liste_oadc.csv', dtype=str)
-                    oadc_list = df_oadc['OADC'].tolist()
-                except FileNotFoundError:
-                    oadc_list = []
+            # Charger la liste OADC
+            try:
+                df_oadc = pd.read_csv('liste_oadc.csv', dtype=str)
+                oadc_list = df_oadc['OADC'].tolist()
+            except FileNotFoundError:
+                oadc_list = []
 
-                print(oadc_list)
+            print(oadc_list)
 
-                # Chercher dans la colonne EMETTEUR
-                df['expediteur_nettoye'] = ""
-                df['typologie_expediteur'] = ""
-                # df['EMETTEUR'] = df['EMETTEUR'].replace('nan', '')
-                for i, row in df.iterrows():
-                    emetteur = row['EMETTEUR']
-                    print(f"emetteur en cours : {emetteur}", end=' ')
-                    if pd.isna(emetteur):
-                        df.at[i, 'expediteur_nettoye'] = ""
-                        df.at[i, 'typologie_expediteur'] = "Non identifié"
-                        continue
+            # Chercher dans la colonne EMETTEUR
+            df['expediteur_nettoye'] = ""
+            df['typologie_expediteur'] = ""
+            df['rebond_nettoye'] = ""
+            df['typologie_rebond'] = ""
+
+            # df['EMETTEUR'] = df['EMETTEUR'].replace('nan', '')
+            for i, row in df.iterrows():
+                # extraction de l'émetteur et
+                emetteur = row['EMETTEUR']
+                print(f"emetteur en cours : {emetteur}", end=' ')
+                if pd.isna(emetteur):
+                    df.at[i, 'expediteur_nettoye'] = ""
+                    df.at[i, 'typologie_expediteur'] = "Non identifié"
+                else:
                     emetteur_sans_espace = emetteur.replace(' ', '')  # Retire tous les espaces de la chaîne
 
                     # match = re.search(r'33\d{9}|0\d{9}|\d{9}|118\d{6}|\d{5}|\d{4}', emetteur_sans_espace)
                     # match = re.search(r'33\d{9}|0\d{9}|\d{9}|118\d{6}|\d{5}|\d{4}|\d{14}|33\d{12}|\d{13}',
-                    match = re.search(r'33\d{13}|0\d{13}|\d{13}|33\d{9}|0\d{9}|\d{9}|118\d{6}|\d{5}|\d{4}',
+                    match = re.search(r'33\d{13}|0\d{13}|\d{13}|33\d{9}|0\d{9}|\d{9}|118\d{3}|\d{5}|\d{4}',
                                       emetteur_sans_espace)
                     if match:
                         numero = normaliser_numero(match.group())
@@ -106,17 +109,32 @@ class Application(tk.Frame):
                         df.at[i, 'typologie_expediteur'] = "Non identifié"
                         print(f" - non identifié = {emetteur}")
 
+                # extraction du numéro de rebond du message
+                texte_message = row['MESSAGE']
+                if pd.isna(texte_message):
+                    df.at[i, 'rebond_nettoye'] = ""
+                    df.at[i, 'typologie_rebond'] = "Aucun"
+                else:
+                    message_nettoye = texte_message.replace(' ', '').replace('.', '').replace('-', '')
+                    match = re.search(r'33\d{13}|0\d{13}|33\d{9}|0\d{9}|118\d{6}|\d{5}|\d{4}',
+                                      message_nettoye)
+                    if match:
+                        numero = normaliser_numero(match.group())
+                        df.at[i, 'rebond_nettoye'] = numero
+                        df.at[i, 'typologie_rebond'] = typologie_emetteur(numero)
+                        print(f" - rebond nettoyé = {numero} - typologie : {typologie_emetteur(numero)}")
 
-                # Save to Excel
-                outfile = os.path.join(self.outdir, os.path.basename(self.filepath).split('.')[0] + '.xlsx')
-                df.to_excel(outfile, index=False, engine='openpyxl')
+            # Save to Excel
+            outfile = os.path.join(self.outdir, os.path.basename(self.filepath).split('.')[0] + '.xlsx')
+            df.to_excel(outfile, index=False, engine='openpyxl')
 
-                # Inform the user
-                messagebox.showinfo("Succès", "Conversion réussie!")
-            # except Exception as e:
-            #     messagebox.showerror("Erreur", str(e))
+            # Inform the user
+            messagebox.showinfo("Succès", "Conversion réussie!")
+        # except Exception as e:
+        #     messagebox.showerror("Erreur", str(e))
         else:
             messagebox.showerror("Erreur", "Veuillez choisir un fichier d'entrée CSV")
+
 
 def normaliser_numero(numero):
     if len(numero) == 15 and numero.startswith("33"):
@@ -130,6 +148,7 @@ def normaliser_numero(numero):
     else:
         return numero
 
+
 def typologie_emetteur(numero):
     if len(numero) == 14 and (numero.startswith("06") or numero.startswith("07")):
         return "M2M"
@@ -142,6 +161,8 @@ def typologie_emetteur(numero):
             return "SVA"
         else:
             return "Géographique"
+    elif len(numero) == 6 and numero.startswith('118'):
+        return 'SVA'
     elif len(numero) == 5:
         if numero == "33700":
             return "33700"
@@ -153,8 +174,14 @@ def typologie_emetteur(numero):
             return "Numéro opérateur"
         else:
             return "Autres ABDCE"
+    elif len(numero) == 4:
+        if numero.startswith('3'):
+            return 'SVA'
+        elif numero[0] in ['1', '2']:
+            return "Numéro opérateur"
     else:
         return "Non identifié"
+
 
 root = tk.Tk()
 app = Application(master=root)

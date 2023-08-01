@@ -63,7 +63,8 @@ class Application(tk.Frame):
             # df = pd.read_csv(self.filepath, delimiter=';', encoding='ISO-8859-1', dtype={'EMETTEUR': str, 'ALIAS_SIGNALANT': str})
             df = pd.read_csv(self.filepath, delimiter=';', encoding='ISO-8859-1', dtype=str)
             df.replace({re.compile(r'[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]'): ''}, regex=True, inplace=True)
-            df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '').str.rstrip('.0')
+            df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '')
+            # df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '').str.rstrip('.0')
 
             # Charger la liste OADC
             try:
@@ -80,6 +81,19 @@ class Application(tk.Frame):
             df['rebond_nettoye'] = ""
             df['typologie_rebond'] = ""
 
+            # changer d'ordre des colonnes
+            column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
+                            'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'DATE_RECEPTION', 'MOIS_RECEPTION',
+                            'ANALYSE_STOP', 'TYPE_EMETTEUR']
+
+            # Check if all columns in column_order are present in df.columns
+            if set(column_order).issubset(df.columns):
+                remaining_columns = [col for col in df.columns if col not in column_order]
+                new_order = column_order + remaining_columns
+                df = df[new_order]
+            else:
+                print("Some columns are missing from the dataframe")
+
             # df['EMETTEUR'] = df['EMETTEUR'].replace('nan', '')
             for i, row in df.iterrows():
                 # extraction de l'émetteur et
@@ -89,17 +103,12 @@ class Application(tk.Frame):
                     df.at[i, 'expediteur_nettoye'] = ""
                     df.at[i, 'typologie_expediteur'] = "Non identifié"
                 else:
-                    emetteur_sans_espace = emetteur.replace(' ', '')  # Retire tous les espaces de la chaîne
-
-                    # match = re.search(r'33\d{9}|0\d{9}|\d{9}|118\d{6}|\d{5}|\d{4}', emetteur_sans_espace)
-                    # match = re.search(r'33\d{9}|0\d{9}|\d{9}|118\d{6}|\d{5}|\d{4}|\d{14}|33\d{12}|\d{13}',
-                    match = re.search(r'33\d{13}|0\d{13}|\d{13}|33\d{9}|0\d{9}|\d{9}|118\d{3}|\d{5}|\d{4}',
-                                      emetteur_sans_espace)
-                    if match:
-                        numero = normaliser_numero(match.group())
+                    numero = extraire_numero_de_texte(emetteur)
+                    if numero:
+                        # numero = normaliser_numero(match.group())
                         df.at[i, 'expediteur_nettoye'] = numero
-                        df.at[i, 'typologie_expediteur'] = typologie_emetteur(numero)
-                        print(f" - numero nettoyé = {numero} - typologie : {typologie_emetteur(numero)}")
+                        df.at[i, 'typologie_expediteur'] = typologie_numero(numero)
+                        print(f" - numero nettoyé = {numero} - typologie : {typologie_numero(numero)}")
                     elif emetteur in oadc_list:
                         df.at[i, 'typologie_expediteur'] = "OADC"
                         df.at[i, 'expediteur_nettoye'] = emetteur
@@ -115,14 +124,17 @@ class Application(tk.Frame):
                     df.at[i, 'rebond_nettoye'] = ""
                     df.at[i, 'typologie_rebond'] = "Aucun"
                 else:
-                    message_nettoye = texte_message.replace(' ', '').replace('.', '').replace('-', '')
-                    match = re.search(r'33\d{13}|0\d{13}|33\d{9}|0\d{9}|118\d{6}|\d{5}|\d{4}',
-                                      message_nettoye)
-                    if match:
-                        numero = normaliser_numero(match.group())
-                        df.at[i, 'rebond_nettoye'] = numero
-                        df.at[i, 'typologie_rebond'] = typologie_emetteur(numero)
-                        print(f" - rebond nettoyé = {numero} - typologie : {typologie_emetteur(numero)}")
+                    numero_rebond = extraire_numero_de_texte(texte_message)
+                    # message_nettoye = texte_message.replace(' ', '').replace('.', '').replace('-', '')
+                    # match = re.search(r'33\d{13}|0\d{13}|33\d{9}|0\d{9}|118\d{6}|\d{5}|\d{4}',
+                    #                   message_nettoye)
+                    # if match:
+                    if numero_rebond:
+                        typologie_rebond = typologie_numero(numero_rebond)
+                        # numero = normaliser_numero(match.group())
+                        df.at[i, 'rebond_nettoye'] = numero_rebond
+                        df.at[i, 'typologie_rebond'] = typologie_rebond
+                        print(f" - rebond nettoyé = {numero_rebond} - typologie : {typologie_rebond}")
 
             # Save to Excel
             outfile = os.path.join(self.outdir, os.path.basename(self.filepath).split('.')[0] + '.xlsx')
@@ -136,7 +148,35 @@ class Application(tk.Frame):
             messagebox.showerror("Erreur", "Veuillez choisir un fichier d'entrée CSV")
 
 
+def extraire_numero_de_texte(texte_source):
+    # sourcery skip: use-named-expression
+    # source_sans_espace = texte_source.replace(' ', '')  # Retire tous les espaces de la chaîne
+    source_sans_espace = texte_source.replace(' ', '').replace('.', '').replace('-', '')  # Retire tous les séparateurs usuels de la chaine
+    # match = re.search(r'33\d{9}|0\d{9}|\d{9}|118\d{6}|\d{5}|\d{4}', emetteur_sans_espace)
+    # match = re.search(r'33\d{9}|0\d{9}|\d{9}|118\d{6}|\d{5}|\d{4}|\d{14}|33\d{12}|\d{13}',
+    # match = re.search(r'33\d{13}|0\d{13}|\d{13}|33\d{9}|0\d{9}|\d{9}|118\d{3}|\d{5}|\d{4}',
+    #                   source_sans_espace)
+    match = re.search(r'(00)?33700\d{10}|0700\d{10}|700\d{10}|(00)?33\d{9}|0\d{9}|\d{9}|118\d{3}|\d{5}|\d{4}',
+                      source_sans_espace)
+    if not match:
+        match_international = re.search(r'\+\d{5,}|00\d{5,}', source_sans_espace)
+        return match_international.group() if match_international else None
+
+    numero_brut_trouve = match.group()
+
+    matches_consecutifs = re.findall(r'\d+', source_sans_espace)
+    tailles_consecutifs = [len(match) for match in matches_consecutifs]
+
+    if len(numero_brut_trouve) not in tailles_consecutifs:
+        return None
+
+    return normaliser_numero(numero_brut_trouve)
+
+
 def normaliser_numero(numero):
+    if numero.startswith('00'):
+        numero = numero[2:]
+
     if len(numero) == 15 and numero.startswith("33"):
         return "0" + numero[2:]
     elif len(numero) == 13:
@@ -149,8 +189,10 @@ def normaliser_numero(numero):
         return numero
 
 
-def typologie_emetteur(numero):
-    if len(numero) == 14 and (numero.startswith("06") or numero.startswith("07")):
+def typologie_numero(numero):
+    if numero.startswith('+') or numero.startswith('00'):
+        return "International"
+    if len(numero) == 14 and numero.startswith("0700"):
         return "M2M"
     if len(numero) == 10 and numero.startswith("0"):
         if numero[:2] == "09":

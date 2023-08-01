@@ -159,8 +159,7 @@ def extraire_numero_de_texte(texte_source):
     match = re.search(r'(00)?33700\d{10}|0700\d{10}|700\d{10}|(00)?33\d{9}|0\d{9}|\d{9}|118\d{3}|\d{5}|\d{4}',
                       source_sans_espace)
     if not match:
-        match_international = re.search(r'\+\d{5,}|00\d{5,}', source_sans_espace)
-        return match_international.group() if match_international else None
+        return extraire_numero_international(source_sans_espace)
 
     numero_brut_trouve = match.group()
 
@@ -168,9 +167,14 @@ def extraire_numero_de_texte(texte_source):
     tailles_consecutifs = [len(match) for match in matches_consecutifs]
 
     if len(numero_brut_trouve) not in tailles_consecutifs:
-        return None
+        return extraire_numero_international(source_sans_espace)
 
     return normaliser_numero(numero_brut_trouve)
+
+
+def extraire_numero_international(source_sans_espace):
+    match_international = re.search(r'\+\d{5,}|00\d{5,}', source_sans_espace)
+    return match_international.group() if match_international else None
 
 
 def normaliser_numero(numero):

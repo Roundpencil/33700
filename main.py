@@ -5,7 +5,7 @@ import numpy as np
 import re
 import os
 import pickle
-
+import chardet
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -68,7 +68,15 @@ class Application(tk.Frame):
 
             # Charger la liste OADC
             try:
-                df_oadc = pd.read_csv('liste_oadc.csv', dtype=str)
+                # Détecter l'encodage du fichier
+                with open('liste_oadc.csv', 'rb') as f:
+                    result = chardet.detect(f.read())
+
+                # Lire le fichier avec l'encodage détecté
+                encoding = result['encoding']
+                df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', encoding=encoding, dtype=str)
+                # df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', dtype=str)
+
                 oadc_list = df_oadc['OADC'].tolist()
             except FileNotFoundError:
                 oadc_list = []

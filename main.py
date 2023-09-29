@@ -237,6 +237,29 @@ def typologie_numero(numero):
         return "Non identifié"
 
 
+# Fonction pour trouver l'opérateur
+def trouver_operateur(numero, majnum, majrio):
+    try:
+        # Tentez de convertir 'numero' en entier
+        numero = int(numero)
+    except ValueError:
+        print(f"Le numéro {numero} n'est pas un nombre, il n'a pas d'opérateur")
+        return ''
+
+    try:
+        tranche = majnum[(majnum['Tranche_Debut'] <= numero) & (majnum['Tranche_Fin'] >= numero)]
+        print(tranche)
+        if not tranche.empty:
+            mnemo = tranche['Mnémo'].iloc[0]
+            operateur = majrio[majrio['Code Attributaire'] == mnemo]['Attributaire'].iloc[0]
+            print(f'opérateur trouvé pour le numéro {numero}: {operateur}')
+            return operateur
+        else:
+            return 'Inconnu'
+    except Exception as e:
+        print(f'erreur durant trouver_operateur : {e}')
+        return ''
+
 root = tk.Tk()
 app = Application(master=root)
 app.mainloop()

@@ -89,6 +89,19 @@ class Application(tk.Frame):
             df['rebond_nettoye'] = ""
             df['typologie_rebond'] = ""
 
+            # identification des opérateurs de l'éxpéditeur
+            majnum = pd.read_excel('MAJNUM.xls')
+
+            # Détecter l'encodage du fichier
+            with open('identifiants_CE.csv', 'rb') as f:
+                result = chardet.detect(f.read())
+
+            # Lire le fichier avec l'encodage détecté
+            encoding = result['encoding']
+            identifiants_CE = pd.read_csv('identifiants_CE.csv', delimiter=';', encoding=encoding, dtype=str)
+
+            df['operateur_arcep'] = ""
+
             # changer d'ordre des colonnes
             column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
                             'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'DATE_RECEPTION', 'MOIS_RECEPTION',
@@ -117,6 +130,11 @@ class Application(tk.Frame):
                         df.at[i, 'expediteur_nettoye'] = numero
                         df.at[i, 'typologie_expediteur'] = typologie_numero(numero)
                         print(f" - numero nettoyé = {numero} - typologie : {typologie_numero(numero)}")
+
+                        #identificaiton opérateur
+                        operateur = trouver_operateur(numero, majnum, identifiants_CE)
+                        print(f'Opérateur trouve : {operateur}')
+                        df.at[i, 'operateur_arcep'] = operateur
                     elif emetteur in oadc_list:
                         df.at[i, 'typologie_expediteur'] = "OADC"
                         df.at[i, 'expediteur_nettoye'] = emetteur
@@ -143,6 +161,14 @@ class Application(tk.Frame):
                         df.at[i, 'rebond_nettoye'] = numero_rebond
                         df.at[i, 'typologie_rebond'] = typologie_rebond
                         print(f" - rebond nettoyé = {numero_rebond} - typologie : {typologie_rebond}")
+
+                #identification des opérateurs de l'éxpéditeur
+                # majnum = pd.read_excel('MAJNUM.xls')
+                # identifiants_CE = pd.read_excel('MAJRIO.xls')
+                # df['expediteur_nettoye'] = ""
+                # for i, row in df.iterrows():
+                #     numero = row['expediteur_nettoye']
+                #     df.at[i, 'operateur'] = trouver_operateur(numero, majnum, identifiants_CE)
 
             # Save to Excel
             outfile = os.path.join(self.outdir, os.path.basename(self.filepath).split('.')[0] + '.xlsx')
@@ -239,11 +265,12 @@ def typologie_numero(numero):
 
 # Fonction pour trouver l'opérateur
 def trouver_operateur(numero, majnum, majrio):
+    print(f"\n\n numéro en cours : {numero} : ")
     try:
         # Tentez de convertir 'numero' en entier
         numero = int(numero)
     except ValueError:
-        print(f"Le numéro {numero} n'est pas un nombre, il n'a pas d'opérateur")
+        # print(f"Le numéro {numero} n'est pas un nombre, il n'a pas d'opérateur")
         return ''
 
     try:
@@ -251,8 +278,8 @@ def trouver_operateur(numero, majnum, majrio):
         print(tranche)
         if not tranche.empty:
             mnemo = tranche['Mnémo'].iloc[0]
-            operateur = majrio[majrio['Code Attributaire'] == mnemo]['Attributaire'].iloc[0]
-            print(f'opérateur trouvé pour le numéro {numero}: {operateur}')
+            operateur = majrio[majrio['CODE_OPERATEUR'] == mnemo]['IDENTITE_OPERATEUR'].iloc[0]
+            # print(f'opérateur trouvé pour le numéro {numero}: {operateur}')
             return operateur
         else:
             return 'Inconnu'

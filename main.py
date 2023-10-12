@@ -88,6 +88,9 @@ class Application(tk.Frame):
             df['typologie_expediteur'] = ""
             df['rebond_nettoye'] = ""
             df['typologie_rebond'] = ""
+            df['date_requalifiee'] = ""
+            df['categorie_no_cible'] = ""
+            df['mois'] = ""
 
             # identification des opérateurs de l'éxpéditeur
             majnum = pd.read_excel('MAJNUM.xls')
@@ -104,7 +107,10 @@ class Application(tk.Frame):
 
             # changer d'ordre des colonnes
             column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
-                            'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'DATE_RECEPTION', 'MOIS_RECEPTION',
+                            'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'date_requalifiee', 'expediteur_nettoye',
+                            'typologie_expediteur', 'operateur_arcep', 'typologie_rebond', 'categorie_no_cible', 'mois',
+                            'DATE_RECEPTION',
+                            'MOIS_RECEPTION',
                             'ANALYSE_STOP', 'TYPE_EMETTEUR']
 
             # Check if all columns in column_order are present in df.columns
@@ -117,6 +123,11 @@ class Application(tk.Frame):
 
             # df['EMETTEUR'] = df['EMETTEUR'].replace('nan', '')
             for i, row in df.iterrows():
+                #extraction de la date
+                date_full = row['DATE_SIGNALEMENT']
+                df.at[i, 'date_requalifiee'] = date_full[:10]
+                df.at[i, 'mois'] = date_full[:7]
+
                 # extraction de l'émetteur et
                 emetteur = row['EMETTEUR']
                 print(f"emetteur en cours : {emetteur}", end=' ')
@@ -162,15 +173,16 @@ class Application(tk.Frame):
                         df.at[i, 'typologie_rebond'] = typologie_rebond
                         print(f" - rebond nettoyé = {numero_rebond} - typologie : {typologie_rebond}")
 
-                #identification des opérateurs de l'éxpéditeur
-                # majnum = pd.read_excel('MAJNUM.xls')
-                # identifiants_CE = pd.read_excel('MAJRIO.xls')
-                # df['expediteur_nettoye'] = ""
-                # for i, row in df.iterrows():
-                #     numero = row['expediteur_nettoye']
-                #     df.at[i, 'operateur'] = trouver_operateur(numero, majnum, identifiants_CE)
+                # print(row['URL_REBOND_SIGNALE'])
+                if pd.isna(row['URL_REBOND_SIGNALE']):
+                    # df.at[i, 'categorie_no_cible'] = row['typologie_rebond']
+                    df.at[i, 'categorie_no_cible'] = df.at[i, 'typologie_rebond']
+                else:
+                    df.at[i, 'categorie_no_cible'] = 'URL'
 
-            # Save to Excel
+
+
+                # Save to Excel
             outfile = os.path.join(self.outdir, os.path.basename(self.filepath).split('.')[0] + '.xlsx')
             df.to_excel(outfile, index=False, engine='openpyxl')
 

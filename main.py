@@ -108,7 +108,8 @@ class Application(tk.Frame):
             # changer d'ordre des colonnes
             column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
                             'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'date_requalifiee', 'expediteur_nettoye',
-                            'typologie_expediteur', 'operateur_arcep', 'typologie_rebond', 'categorie_no_cible', 'mois',
+                            'typologie_expediteur', 'operateur_arcep', 'typologie_rebond', 'categorie_no_cible',
+                            'categorie_no_cible', 'mois',
                             'DATE_RECEPTION',
                             'MOIS_RECEPTION',
                             'ANALYSE_STOP', 'TYPE_EMETTEUR']

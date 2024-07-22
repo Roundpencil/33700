@@ -7,6 +7,7 @@ import os
 import pickle
 import chardet
 
+
 class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -77,7 +78,24 @@ class Application(tk.Frame):
                 df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', encoding=encoding, dtype=str)
                 # df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', dtype=str)
 
-                oadc_list = df_oadc['OADC'].tolist()
+                # oadc_list = df_oadc['OADC'].tolist()
+                oadc_list = [str(value).lower() for value in df_oadc['OADC'].tolist()]
+            except FileNotFoundError:
+                oadc_list = []
+
+            print(oadc_list)
+            # Charger la liste OADC sensibles
+            try:
+                # Détecter l'encodage du fichier
+                with open('oadc_sensibles.csv', 'rb') as f:
+                    result = chardet.detect(f.read())
+
+                # Lire le fichier avec l'encodage détecté
+                encoding = result['encoding']
+                base_oadc_interdits = pd.read_csv('oadc_sensibles.csv', delimiter=';', encoding=encoding, dtype=str)
+                print(base_oadc_interdits.columns)
+                # Convert the 'OADC INTERDITS' column to lowercase
+                base_oadc_interdits['OADC INTERDIT'] = base_oadc_interdits['OADC INTERDIT'].str.lower()
             except FileNotFoundError:
                 oadc_list = []
 
@@ -91,6 +109,7 @@ class Application(tk.Frame):
             df['date_requalifiee'] = ""
             df['categorie_no_cible'] = ""
             df['mois'] = ""
+            df['type_protection'] = ''
 
             # identification des opérateurs de l'éxpéditeur
             majnum = pd.read_excel('MAJNUM.xls')
@@ -124,7 +143,7 @@ class Application(tk.Frame):
 
             # df['EMETTEUR'] = df['EMETTEUR'].replace('nan', '')
             for i, row in df.iterrows():
-                #extraction de la date
+                # extraction de la date
                 date_full = row['DATE_SIGNALEMENT']
                 df.at[i, 'date_requalifiee'] = date_full[:10]
                 df.at[i, 'mois'] = date_full[:7]
@@ -143,14 +162,15 @@ class Application(tk.Frame):
                         df.at[i, 'typologie_expediteur'] = typologie_numero(numero)
                         print(f" - numero nettoyé = {numero} - typologie : {typologie_numero(numero)}")
 
-                        #identificaiton opérateur
+                        # identificaiton opérateur
                         operateur = trouver_operateur(numero, majnum, identifiants_CE)
                         print(f'Opérateur trouve : {operateur}')
                         df.at[i, 'operateur_arcep'] = operateur
-                    elif emetteur in oadc_list:
+                    elif emetteur.lower() in oadc_list:
                         df.at[i, 'typologie_expediteur'] = "OADC"
                         df.at[i, 'expediteur_nettoye'] = emetteur
                         print(f" - numero nettoyé = {emetteur} : typologie : OADC")
+                        df.at[i, 'type_protection'] = trouver_interdiction(emetteur, base_oadc_interdits)
 
                     else:
                         df.at[i, 'typologie_expediteur'] = "Non identifié"
@@ -181,8 +201,6 @@ class Application(tk.Frame):
                 else:
                     df.at[i, 'categorie_no_cible'] = 'URL'
 
-
-
                 # Save to Excel
             outfile = os.path.join(self.outdir, os.path.basename(self.filepath).split('.')[0] + '.xlsx')
             df.to_excel(outfile, index=False, engine='openpyxl')
@@ -198,7 +216,8 @@ class Application(tk.Frame):
 def extraire_numero_de_texte(texte_source):
     # sourcery skip: use-named-expression
     # source_sans_espace = texte_source.replace(' ', '')  # Retire tous les espaces de la chaîne
-    source_sans_espace = texte_source.replace(' ', '').replace('.', '').replace('-', '')  # Retire tous les séparateurs usuels de la chaine
+    source_sans_espace = texte_source.replace(' ', '').replace('.', '').replace('-',
+                                                                                '')  # Retire tous les séparateurs usuels de la chaine
     # match = re.search(r'33\d{9}|0\d{9}|\d{9}|118\d{6}|\d{5}|\d{4}', emetteur_sans_espace)
     # match = re.search(r'33\d{9}|0\d{9}|\d{9}|118\d{6}|\d{5}|\d{4}|\d{14}|33\d{12}|\d{13}',
     # match = re.search(r'33\d{13}|0\d{13}|\d{13}|33\d{9}|0\d{9}|\d{9}|118\d{3}|\d{5}|\d{4}',
@@ -299,6 +318,23 @@ def trouver_operateur(numero, majnum, majrio):
     except Exception as e:
         print(f'erreur durant trouver_operateur : {e}')
         return ''
+
+
+def trouver_interdiction(oadc, base_oadc_interdits):
+    print(f"\n\n oadc en cours de verification d'interdiction : {oadc} : ")
+    try:
+        oadc = oadc.lower()
+    except ValueError:
+        return ''
+
+    try:
+        ligne = base_oadc_interdits[base_oadc_interdits['OADC INTERDIT'] == oadc]
+        print(ligne)
+        return 'non protégé' if ligne.empty else ligne["TYPE D'INTERDICTION"].iloc[0].lower().strip()
+    except Exception as e:
+        print(f'erreur durant trouver_operateur : {e}')
+        return ''
+
 
 root = tk.Tk()
 app = Application(master=root)

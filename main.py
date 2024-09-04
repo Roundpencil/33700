@@ -110,6 +110,7 @@ class Application(tk.Frame):
             df['categorie_no_cible'] = ""
             df['mois'] = ""
             df['type_protection'] = ''
+            df['opr arcep rebond'] = ''
 
             # identification des opérateurs de l'éxpéditeur
             majnum = pd.read_excel('MAJNUM.xls')
@@ -192,6 +193,8 @@ class Application(tk.Frame):
                         # numero = normaliser_numero(match.group())
                         df.at[i, 'rebond_nettoye'] = numero_rebond
                         df.at[i, 'typologie_rebond'] = typologie_rebond
+                        # operateur = trouver_operateur(numero_rebond, majnum, identifiants_CE)
+                        # df.at[i, 'opr arcep rebond'] = operateur
                         print(f" - rebond nettoyé = {numero_rebond} - typologie : {typologie_rebond}")
 
                 # print(row['URL_REBOND_SIGNALE'])

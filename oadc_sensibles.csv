@@ -1,0 +1,312 @@
+﻿DOMAINE;MARQUE SENSIBLE;OADC INTERDIT;TYPE D'INTERDICTION;commentaires; mise à jour
+Autres ;APPLE;apple;Interdit sauf autorisation;;15/10/2022
+Autres ;APPLE;apple sav;Interdit sauf autorisation;;15/10/2022
+Autres ;APPLE;apple.inc;Strictement interdit;;15/10/2022
+Autres ;APPLE;applecare;Interdit sauf autorisation;;15/10/2022
+Autres ;APPLE;applefr;Strictement interdit;;15/10/2022
+Autres ;APPLE;appleicloud;Interdit sauf autorisation;;15/10/2022
+Autres ;APPLE;applepay;Interdit sauf autorisation;;15/10/2022
+Autres ;APPLE;applestore;Interdit sauf autorisation;;15/10/2022
+Autres ;CLICKTOP;clicktop;Interdit sauf autorisation;;19/12/2022
+Autres ;GOOGLE;google;Interdit sauf autorisation;;15/10/2022
+Autres ;NETFLIX;nelfllx;Strictement interdit;;31/01/2023
+Autres ;NETFLIX;netflix;Interdit sauf autorisation;;15/10/2022
+Autres ;NETFLIX;netflix3417;Strictement interdit;;19/12/2022
+Autres ;NETFLIX;netflixfr;Strictement interdit;;15/10/2022
+Autres ;NETFLIX;netflixsms;Strictement interdit;;15/10/2022
+Autres ;NETFLIX;netflx;Strictement interdit;;19/12/2022
+Autres ;NETFLIX;ntflx;Strictement interdit;;19/12/2022
+BANQUE;QONTO;qonto;Interdit sauf autorisation;Orange propose le changement de statut 17/07;27/06/2023
+BANQUE;BANQUE POPULAIRE;banque p;Strictement interdit;;19/12/2022
+BANQUE;BNP PARIBAS;bnp paribas;Interdit sauf autorisation;;15/10/2022
+BANQUE;BNP PARIBAS;bnpp;Interdit sauf autorisation;update du 07/02/2023;31/01/2023
+BANQUE;BNP PARIBAS;bnpparibas;Interdit sauf autorisation;;15/10/2022
+BANQUE;BOURSORAMA;bourso bank;Strictement interdit;;27/06/2023
+BANQUE;BOURSORAMA;boursorama;Interdit sauf autorisation;;15/10/2022
+BANQUE;BANQUE POPULAIRE;bp nord;Interdit sauf autorisation;;15/10/2022
+BANQUE;BANQUE POPULAIRE;bp paca;Interdit sauf autorisation;;15/10/2022
+BANQUE;BANQUE POPULAIRE;bpaca;Interdit sauf autorisation;demande  mais déjà pris en compte;19/12/2022
+BANQUE;BRED;bred;Interdit sauf autorisation;;15/10/2022
+BANQUE;CAISSE EPARGNE;c epargne;Interdit sauf autorisation;demande  changement de statut;19/12/2022
+BANQUE;Crédit Agricole;c.agricole;Interdit sauf autorisation;;06/03/2023
+BANQUE;CREDIT AGRICOLE;ca;Interdit sauf autorisation;;15/10/2022
+BANQUE;CREDIT DU NORD;cdn;Interdit sauf autorisation;;15/10/2022
+BANQUE;CAISSE EPARGNE;cepargne;Interdit sauf autorisation;;19/12/2022
+BANQUE;CERTICODEFR;certicodefr;Strictement interdit;;19/12/2022
+BANQUE;CREDIT INDUSTRIEL ET COMMERCIAL;cic;Interdit sauf autorisation;demande  mais déjà pris en compte;19/12/2022
+BANQUE;CREDIT AGRICOLE;cr agricole;Interdit sauf autorisation;demande  mais déjà pris en compte;19/12/2022
+BANQUE;CREDIT MUTUEL;cred mutuel;Interdit sauf autorisation;demande  mais déjà pris en compte;19/12/2022
+BANQUE;CREDIT MUTUEL;credit mut;Interdit sauf autorisation;;15/10/2022
+BANQUE;Infosms;infosms;Interdit sauf autorisation;;19/12/2022
+BANQUE;LA BANQUE POSTALE;la poste;Interdit sauf autorisation;input du 19/12/2022;14/03/2023
+BANQUE;LA BANQUE POSTALE;la-postale;Strictement interdit;;19/12/2022
+BANQUE;LA BANQUE POSTALE;laposte;Interdit sauf autorisation;imput du 19/12/2022;14/03/2023
+BANQUE;LA BANQUE POSTALE;lbp;Interdit sauf autorisation;;15/10/2022
+BANQUE;LA BANQUE POSTALE;lbp credit;Interdit sauf autorisation;;15/10/2022
+BANQUE;CREDIT LYONNAIS;lcl;Interdit sauf autorisation;;15/10/2022
+BANQUE;BNP PARIBAS;mabanque;Interdit sauf autorisation;;31/01/2023
+BANQUE;banque NICKEL;nickei;Strictement interdit;(i majuscule à la fin);06/03/2023
+BANQUE;NICKEL;nickel;Interdit sauf autorisation;;31/01/2023
+BANQUE;BNP;omsb;Interdit sauf autorisation;la société OMSB existe;06/03/2023
+BANQUE;Paylib ;paylib ;Interdit sauf autorisation;;28/03/2023
+BANQUE;PAYPAL;paypai;Strictement interdit;(i majuscule);15/10/2022
+BANQUE;PAYPAL;paypaifr;Strictement interdit;;15/10/2022
+BANQUE;PAYPAL;paypai-info;Strictement interdit;;15/10/2022
+BANQUE;PAYPAL;paypaisms;Strictement interdit;;15/10/2022
+BANQUE;PAYPAL;paypal;Interdit sauf autorisation;;15/10/2022
+BANQUE;PAYPAL;pay-pal;Strictement interdit;;15/10/2022
+BANQUE;PAYPAL;paypal fr;Strictement interdit;;15/10/2022
+BANQUE;PAYPAL;paypal fran;Strictement interdit;;15/10/2022
+BANQUE;PAYPAL;paypalfr;Strictement interdit;;15/10/2022
+BANQUE;POST;post;Strictement interdit;;19/12/2022
+BANQUE;SECUR;secur;Strictement interdit;;19/12/2022
+BANQUE;LA BANQUE POSTALE;securite lbp;Interdit sauf autorisation;;15/10/2022
+BANQUE;LA BANQUE POSTALE;securitelbp;Interdit sauf autorisation;;15/10/2022
+BANQUE;SECURPASS;securpass;Strictement interdit;;19/12/2022
+BANQUE;SOCIETE GENERALE;sg;Interdit sauf autorisation;;19/12/2022
+BANQUE;BNP;smsotp;Strictement interdit;;27/06/2023
+BANQUE;SOCIETE GENERALE;so generale;Strictement interdit;;15/10/2022
+BANQUE;SOCIETE GENERALE;soge;Strictement interdit;;15/10/2022
+BANQUE;Crédit Agricole;unsic;Interdit sauf autorisation;La société UNSIC existe;06/03/2023
+ENERGIE;E HOUSE;e house;Strictement interdit;;19/12/2022
+ENERGIE;ECO H;eco h;Strictement interdit;;19/12/2022
+ENERGIE;ECOHOUSE;ecohouse;Strictement interdit;;19/12/2022
+ENERGIE;EDF;edf;Interdit sauf autorisation;;15/10/2022
+ENERGIE;EDF;edf en;Interdit sauf autorisation;SFR propose Changement de statut le 30/06/2023;30/06/2023
+ENERGIE;EDF;edf enr;Interdit sauf autorisation;demande  changement de statut;19/12/2022
+ENERGIE;EDF;edfcorse;Interdit sauf autorisation;;15/10/2022
+ENERGIE;EDF;edfcoupure;Interdit sauf autorisation;;15/10/2022
+ENERGIE;EDF;edfdircom;Interdit sauf autorisation;;15/10/2022
+ENERGIE;EDF;edfenr;Interdit sauf autorisation;SFR propose Changement de statut le 30/06/2023;30/06/2023
+ENERGIE;EDF;edfimpaye;Interdit sauf autorisation;;15/10/2022
+ENERGIE;EDF;edfrelance;Interdit sauf autorisation;;15/10/2022
+ENERGIE;EHOUSE;ehouse;Strictement interdit;;19/12/2022
+ENERGIE;ENERGIE;energie;Strictement interdit;;19/12/2022
+ENERGIE;Énergie;énergie;Strictement interdit;;19/12/2022
+ENERGIE;ENERGIE H;energie h;Strictement interdit;;19/12/2022
+ENERGIE;ENERGY;energy;Strictement interdit;;19/12/2022
+ENERGIE;ENGIE;engie;Interdit sauf autorisation;;15/10/2022
+ENERGIE;GAZENERGI;gazenergl;Strictement interdit;;19/12/2022
+ENERGIE;GRDF;grdf;Interdit sauf autorisation;;15/10/2022
+ENERGIE;GRDF;grdf inco;Interdit sauf autorisation;SFR propose Changement de statut le 30/06/2023;30/06/2023
+ENERGIE;H ENERGIE;h energie;Strictement interdit;;19/12/2022
+EPARGNE;Livret 2022;livret 2022;Strictement interdit;;19/12/2022
+FORMATION;CPF;cpf;Strictement interdit;;15/10/2022
+FORMATION;CPF;cpf-gouv;Strictement interdit;;19/12/2022
+FORMATION;CPF;demandecpf;Strictement interdit;;15/10/2022
+FORMATION;CPF;maformation;Strictement interdit;;15/10/2022
+GENERIQUE;ANTAI;26824;Strictement interdit;Cet OADC strictement numérique a été observé. Il n'est pas utilisé actuellement par un serveur privé.;06/03/2023
+GENERIQUE;3DSECURE;3dsecure;Interdit sauf autorisation;;15/10/2022
+GENERIQUE;Abonnement;abonnement;Strictement interdit;;19/12/2022
+GENERIQUE;Crédit Agricole;agricoie;Strictement interdit;inscrit le 06/03/2023- changement de statut le 08/05/2023;08/05/2023
+GENERIQUE;Crédit Agricole;agricole;Interdit sauf autorisation;;08/05/2023
+GENERIQUE;ALERTE;alerte;Interdit sauf autorisation;Nouveau Solution d'Alerte des Maires;19/12/2022
+GENERIQUE;ANTAI;amende;Strictement interdit;;06/03/2023
+GENERIQUE;ASSURANCE;assurance;Strictement interdit;;19/12/2022
+GENERIQUE;AUTHMSG;authmsg;Interdit sauf autorisation;;19/12/2022
+GENERIQUE;BANQUE;banque;Strictement interdit;"pour l'instant OK ; en attendant- trafic legitime";31/01/2023
+GENERIQUE;BLOCAGE;blocage;Strictement interdit;;15/10/2022
+GENERIQUE;BLOCAGE;bloquage;Strictement interdit;;15/10/2022
+GENERIQUE;FINANCE;finance;Strictement interdit;;19/12/2022
+GENERIQUE;INFO;info;Strictement interdit;;15/10/2022
+GENERIQUE;infofr;infofr;Strictement interdit;;19/12/2022
+GENERIQUE;LABO;labo;Strictement interdit;;15/10/2022
+GENERIQUE;LABORATOIRE;laboratoire;Strictement interdit;;15/10/2022
+GENERIQUE;Livraison;Livraison;Interdit sauf autorisation;MTARGET propose Changement de statut le 30/06/2023;30/06/2023
+GENERIQUE;NOTICE;notice;Strictement interdit;;19/12/2022
+GENERIQUE;service;service;Strictement interdit;;19/12/2022
+GENERIQUE;SERVICES;services;Strictement interdit;;19/12/2022
+GENERIQUE;SMSIN;smsin;Strictement interdit;;19/12/2022
+GENERIQUE;SMSINFO;smsinfo;Strictement interdit;;19/12/2022
+GENERIQUE;TEST;test;Strictement interdit;;15/10/2022
+GENERIQUE;WEB SMS;web sms;Interdit sauf autorisation;demande  changement de statut;19/12/2022
+GENERIQUE;WEB SMS;websms;Interdit sauf autorisation;demande  changement de statut;19/12/2022
+INSTITUTIONS;ANTAI;amende gouv;Strictement interdit;;06/03/2023
+INSTITUTIONS;ANTAI;amende info;Strictement interdit;;06/03/2023
+INSTITUTIONS;ANTAI;amendegouv;Strictement interdit;;06/03/2023
+INSTITUTIONS;ANTAI;amendeinfo;Strictement interdit;;06/03/2023
+INSTITUTIONS;ANTAI;amendes gouv;Strictement interdit;;06/03/2023
+INSTITUTIONS;ANTAI;amendes info;Strictement interdit;;06/03/2023
+INSTITUTIONS;ANTAI;antai;Strictement interdit;;06/03/2023
+INSTITUTIONS;ANTAI;antaigouv;Strictement interdit;;06/03/2023
+INSTITUTIONS;ANTAI;antal;Interdit sauf autorisation;(L minuscule);06/03/2023
+INSTITUTIONS;ANTAI;antay;Strictement interdit;;06/03/2023
+INSTITUTIONS;CAF;caf;Interdit sauf autorisation;;15/10/2022
+INSTITUTIONS;CAF;caf;Interdit sauf autorisation;CAF # ( Numéro département);15/10/2022
+INSTITUTIONS;CAF;caf;Interdit sauf autorisation;CAF Région;15/10/2022
+INSTITUTIONS;Crit Air;critair;Interdit sauf autorisation;;19/12/2022
+INSTITUTIONS;DGCCRF;dgccrf;Strictement interdit;Chgt de statut le 27/06/2023;15/10/2022
+INSTITUTIONS;DGFIP;dgfip;Interdit sauf autorisation;inscrit le 15/10/2022- changement de statut le 08/05/2023;08/05/2023
+INSTITUTIONS;EMPLOI;emploi;Strictement interdit;;19/12/2022
+INSTITUTIONS;FR-ALERT;fr-aiert;Strictement interdit;(i minuscule);15/10/2022
+INSTITUTIONS;FR-ALERT;fr-alert;Strictement interdit;;15/10/2022
+INSTITUTIONS;GOUV.FR;g0uvfr;Strictement interdit;;15/10/2022
+INSTITUTIONS;GOUV.FR;gouv;Strictement interdit;;15/10/2022
+INSTITUTIONS;GOUV.FR;gouv.fr;Strictement interdit;;15/10/2022
+INSTITUTIONS;GOUV.FR;gouvfr;Strictement interdit;;15/10/2022
+INSTITUTIONS;GOUV.FR;gouvinfo;Strictement interdit;;15/10/2022
+INSTITUTIONS;GOUV.FR;govvfr;Strictement interdit;;15/10/2022
+INSTITUTIONS;ANTAI;infoamende;Strictement interdit;;06/03/2023
+INSTITUTIONS;ANTAI;infoamendes;Strictement interdit;;06/03/2023
+INSTITUTIONS;ANTAI;infoantai;Strictement interdit;;06/03/2023
+INSTITUTIONS;ANTAI;infoantal;Strictement interdit;(L minuscule);06/03/2023
+INSTITUTIONS;Ministère;minister;Strictement interdit;;31/01/2023
+INSTITUTIONS;Ministère;ministere;Strictement interdit;;31/01/2023
+INSTITUTIONS;Ministère;ministère;Strictement interdit;;31/01/2023
+INSTITUTIONS;POLE EMPLOI;pole emploi;Interdit sauf autorisation;;15/10/2022
+INSTITUTIONS;ANTAI;sms;Strictement interdit;;27/06/2023
+INSTITUTIONS;ANTAI;timecaps;Strictement interdit;;27/06/2023
+INSTITUTIONS;URSSAF;urssaf;Interdit sauf autorisation;;15/10/2022
+INSTITUTIONS;URSSAF;urssaf paca;Interdit sauf autorisation;;15/10/2022
+INSTITUTIONS;URSSAF;urssaf tese;Strictement interdit;;15/10/2022
+LIVRAISON;CHRONOPOST;chonopost;Strictement interdit;;15/10/2022
+LIVRAISON;CHRONOPOST;chrono;Strictement interdit;;27/06/2023
+LIVRAISON;CHRONOPOST;chronopost;Interdit sauf autorisation;;15/10/2022
+LIVRAISON;CHRONOPOST;Chronopost-;Strictement interdit;;15/10/2022
+LIVRAISON;CHRONOPOST;chronopost*;Strictement interdit;;15/10/2022
+LIVRAISON;CHRONOPOST;chronoposte;Strictement interdit;;15/10/2022
+LIVRAISON;DHL;colis dhl;Strictement interdit;;15/10/2022
+LIVRAISON;COLISSIMO;colissiimo;Strictement interdit;;15/10/2022
+LIVRAISON;COLISSIMO;colissim0;Strictement interdit;;15/10/2022
+LIVRAISON;COLISSIMO;colissimo;Interdit sauf autorisation;demande  mais déjà pris en compte;19/12/2022
+LIVRAISON;COLISSIMO;colissimolp;Strictement interdit;;15/10/2022
+LIVRAISON;DHL;dhl;Interdit sauf autorisation;;15/10/2022
+LIVRAISON;DHL;dhl express;Interdit sauf autorisation;info donnée par agrégateur lors des déclarations OADC;19/12/2022
+LIVRAISON;DHL;dhlexpress;Interdit sauf autorisation;SFR propose Changement de statut le 30/06/2023;30/06/2023
+LIVRAISON;DHL;icade;Interdit sauf autorisation;;06/03/2023
+LIVRAISON;CHRONOPOST;parcel;Strictement interdit;;27/06/2023
+LIVRAISON;CHRONOPOST;post;Strictement interdit;;27/06/2023
+LIVRAISON;COLISSIMO;secure;Strictement interdit;;27/06/2023
+Marchands;AMAZON;amazon;Interdit sauf autorisation;;15/10/2022
+Marchands;AMAZON;amazon fr;Strictement interdit;;15/10/2022
+Marchands;AMAZON;amazon.fr;Strictement interdit;;15/10/2022
+Marchands;DARTY;darty;Interdit sauf autorisation;;15/10/2022
+Marchands;DARTY;darty pam;Interdit sauf autorisation;;15/10/2022
+Marchands;DARTY;darty sav;Interdit sauf autorisation;;15/10/2022
+Marchands;DARTY;darty tulle;Interdit sauf autorisation;;15/10/2022
+Marchands;DARTY;dartycognac;Interdit sauf autorisation;;15/10/2022
+Marchands;DARTY;dartymenton;Interdit sauf autorisation;;15/10/2022
+Marchands;LECLERC;e leclerc;Interdit sauf autorisation;;15/10/2022
+Marchands;LECLERC;elclerc;Interdit sauf autorisation;info donnée par agrégateur lors des déclarations OADC;19/12/2022
+Marchands;AMAZON;infoamazon;Strictement interdit;;15/10/2022
+Marchands;LECLERC;leclerc;Interdit sauf autorisation;info donnée par agrégateur lors des déclarations OADC;19/12/2022
+Marchands;LECLERC;leclercauch;Interdit sauf autorisation;info donnée par agrégateur lors des déclarations OADC;19/12/2022
+Marchands;Le Bon Coin;notify;Strictement interdit;;27/06/2023
+Opérateurs;Orange;0range;Strictement interdit;;15/10/2022
+Opérateurs;Orange;0ranje;Strictement interdit;;15/10/2022
+Opérateurs;Bouygues;bouygtel;Interdit sauf autorisation;;15/10/2022
+Opérateurs;SFR;facturation;Strictement interdit;;27/06/2023
+Opérateurs;FREE;free;Interdit sauf autorisation;;15/10/2022
+Opérateurs;SFR;info sfr box;Interdit sauf autorisation;;15/10/2022
+Opérateurs;SFR;infosfr;Interdit sauf autorisation;;15/10/2022
+Opérateurs;SFR;internesfr;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orange;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orange bank;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orange ftth;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orange info;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orange pro;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orange sa;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orange sav;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orange ui;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orange uipp;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orangebank;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orange-bank;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orangefibre;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orangeftth;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orangegroup;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orangeinfo;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orangemoney;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orangesav;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;orangewi-fi;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;oranje;Strictement interdit;;15/10/2022
+Opérateurs;Orange;rdv orange;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;rdvorange;Interdit sauf autorisation;;15/10/2022
+Opérateurs;RED;red;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;sav orange;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;savorange;Interdit sauf autorisation;;15/10/2022
+Opérateurs;SFR;sfr;Interdit sauf autorisation;;15/10/2022
+Opérateurs;SOSH;sosh;Interdit sauf autorisation;;15/10/2022
+Opérateurs;Orange;tech orange;Strictement interdit;;15/10/2022
+SANTE;AMELI;alertesecu;Strictement interdit;;19/12/2022
+SANTE;AMELI;am.sante;Strictement interdit;;15/10/2022
+SANTE;AMELI;ame.li;Strictement interdit;;15/10/2022
+SANTE;AMELI;ameli;Interdit sauf autorisation;;15/10/2022
+SANTE;AMELI;ameli.de;Strictement interdit;;19/12/2022
+SANTE;AMELI;ameli.fr;Interdit sauf autorisation;;15/10/2022
+SANTE;AMELI;ameli.in;Strictement interdit;;19/12/2022
+SANTE;AMELI;amelifr;Strictement interdit;;15/10/2022
+SANTE;AMELI;ameliinfo;Strictement interdit;;15/10/2022
+SANTE;AMELI;amelisms;Strictement interdit;;15/10/2022
+SANTE;AMELI;amell;Strictement interdit;;15/10/2022
+SANTE;APHP;aphp;Interdit sauf autorisation;info donnée par agrégateur lors des déclarations OADC;19/12/2022
+SANTE;AMELI;cartevitale;Strictement interdit;;15/10/2022
+SANTE;CPAM;cm.sante;Strictement interdit;;15/10/2022
+SANTE;AMELI;cmu;Strictement interdit;;15/10/2022
+SANTE;CPAM;cpam;Interdit sauf autorisation;;15/10/2022
+SANTE;CPAM;cpam;Interdit sauf autorisation;CPAM ( numéro département);15/10/2022
+SANTE;CPAM;cpam;Interdit sauf autorisation;CPAM ( région);15/10/2022
+SANTE;CPAM;cpam.sms;Strictement interdit;;15/10/2022
+SANTE;AMELI;info amelie;Strictement interdit;;15/10/2022
+SANTE;AMELI;infoameli;Strictement interdit;;15/10/2022
+SANTE;AMELI;infosante;Strictement interdit;;15/10/2022
+SANTE;AMELI;info sante;Interdit sauf autorisation;Ajout à la demande de MTARGET- n'existe pas avant;30/06/2023
+SANTE;AMELI;infosecu;Strictement interdit;;19/12/2022
+SANTE;AMELI;infovital;Strictement interdit;;19/12/2022
+SANTE;AMELI;sante;Strictement interdit;;15/10/2022
+SANTE;AMELI;secu;Strictement interdit;;15/10/2022
+SANTE;AMELI;secuvitale;Strictement interdit;;15/10/2022
+SANTE;SIDEP;sidep;Interdit sauf autorisation;;15/10/2022
+SANTE;SIDEP;si-dep;Interdit sauf autorisation;info donnée par agrégateur lors des déclarations OADC;19/12/2022
+SANTE;AMELI;vitale;Strictement interdit;;15/10/2022
+SANTE;AMELI;vtalecarte;Strictement interdit;;15/10/2022
+LIVRAISON;CHRONOPOST;Chonopos ;Strictement interdit ;;14/09/2023
+LIVRAISON;CHRONOPOST;Chrono ;Strictement interdit ;;14/09/2023
+LIVRAISON;CHRONOPOST;colichrono ;Strictement interdit ;;14/09/2023
+Autres ;;appl ;Strictement interdit ;;14/09/2023
+Autres ;;Smsinfos ;Strictement interdit ;;14/09/2023
+Marchands;DISNEY;Disney+ ;Interdit sauf autorisation ;;14/09/2023
+Marchands;RATP;Ratp ;Interdit sauf autorisation ;;14/09/2023
+Marchands;NAVIGO;navigo ;Interdit sauf autorisation ;;14/09/2023
+Autres;générique;Verify ;Strictement interdit ;;14/09/2023
+Autres;générique;Info_sms ;Strictement interdit ;;14/09/2023
+BANQUE;Banque CA  ;CAFR  ;Strictement interdit  ;;13/10/2023
+LIVRAISON;Chronopost  ;Chrono post  ;Strictement interdit  ;;13/10/2023
+Marchands;Crypto  ;Wallet  ;Interdit sauf autorisation  ;;13/10/2023
+LIVRAISON;UPS ;UPS   ;Interdit sauf autorisation  ;;13/10/2023
+Autres;CRYPTO  ;Coinbase  ;Interdit sauf autorisation  ;;13/10/2023
+Marchands;Fraude Familiale  ;Whatsapp  ;Interdit sauf autorisation  ;;13/10/2023
+Autres;Fraude Financière  ;FranceActu  ;Strictement Interdit  ;;13/10/2023
+Autres;Crypto  ;OKX  ;Interdit sauf autorisation  ;;13/10/2023
+INSTITUTIONS;DGFIP  ;IMPOTS  ;Strictement interdit  ;;13/10/2023
+INSTITUTIONS;Antai  ;CREANCEGOUV  ;Strictement interdit  ;;13/10/2023
+BANQUE;Boursobank ;Boursobank ;Interdit sauf autorisation  ;;13/10/2023
+Marchands;Vinted ;Vinted ;Interdit sauf autorisation  ;;13/10/2023
+Marchands;Vinted ;Vlnted ;Strictement interdit  ;;13/10/2023
+Marchands;Navigo ;Navigo IDF ;Interdit sauf autorisation  ;;13/10/2023
+Marchands;Navigo ;Navlgo IDF ;Strictement interdit  ;;13/10/2023
+Marchands;Navigo ;Premier;Strictement interdit  ;Campagnes Navigo ;31/10/2023
+INSTITUTIONS;ANTAI;ANTAIGOUV ;ANTAlGOUV;REVOIR STATUT  SI;31/10/2023
+INSTITUTIONS;;Infogouv;Strictement interdit  ;;31/10/2023
+INSTITUTIONS;;lNFOGOUV;Strictement interdit  ;l minuscule;31/10/2023
+INSTITUTIONS;;INFOG0UV;Strictement interdit  ;;31/10/2023
+Marchands;;OPPOSITION;Strictement interdit  ;;31/10/2023
+INSTITUTIONS;;lmpotsgouv;Strictement interdit  ;l minuscule;31/10/2023
+INSTITUTIONS;;lMPOTSGOUV;Strictement interdit  ;l minuscule;31/10/2023
+INSTITUTIONS;;Impots Gouv;Strictement interdit  ;;31/10/2023
+INSTITUTIONS;DGFIP  ;Gouvimpots;Strictement interdit  ;;31/10/2023
+INSTITUTIONS;DGFIP  ;GOUVlMPOT;Strictement interdit  ;;31/10/2023
+BANQUE;;SG Secure;Interdit sauf autorisation  ;;31/10/2023
+Autres;;MNSPAY;Strictement interdit  ;;31/10/2023
+Autres;;ANTSRS;Strictement interdit  ;;31/10/2023
+Autres;;AVIS;Interdit sauf autorisation  ;;31/10/2023
+Autres;;ANTS;Strictement interdit  ;;31/10/2023
+BANQUE;;InfoCB;Interdit sauf autorisation  ;;31/10/2023
+BANQUE;;Info cb;Interdit sauf autorisation  ;;31/10/2023
+BANQUE;;Info CB;Interdit sauf autorisation  ;;31/10/2023
+BANQUE;;infocb;Interdit sauf autorisation  ;;31/10/2023
+BANQUE;;lnfocb;Strictement interdit  ;l minuscule;31/10/2023
+BANQUE;;aIerte cb;Strictement interdit  ;i majuscule;31/10/2023
+BANQUE;;aIertecb;Strictement interdit  ;i majuscule;31/10/2023
+BANQUE;;Alertcb;Strictement interdit  ;;31/10/2023
+BANQUE;;CREDMUTUEL;Interdit sauf autorisation  ;;31/10/2023
+;;;;;

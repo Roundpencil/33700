@@ -28,39 +28,11 @@ def convert(filepath:str, outdir:str, mode=MODE_DEFAUT):  # sourcery skip: use-n
     df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '')
     # df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '').str.rstrip('.0')
 
-    # Charger la liste OADC
-    try:
-        # Détecter l'encodage du fichier
-        with open('liste_oadc.csv', 'rb') as f:
-            result = chardet.detect(f.read())
-
-        # Lire le fichier avec l'encodage détecté
-        encoding = result['encoding']
-        df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', encoding=encoding, dtype=str)
-        # df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', dtype=str)
-
-        # oadc_list = df_oadc['OADC'].tolist()
-        oadc_list = [str(value).lower() for value in df_oadc['OADC'].tolist()]
-    except FileNotFoundError:
-        oadc_list = []
-
+    oadc_list = charger_liste_oadc_connus()
     print(oadc_list)
-    # Charger la liste OADC sensibles
-    try:
-        # Détecter l'encodage du fichier
-        with open('oadc_sensibles.csv', 'rb') as f:
-            result = chardet.detect(f.read())
 
-        # Lire le fichier avec l'encodage détecté
-        encoding = result['encoding']
-        base_oadc_interdits = pd.read_csv('oadc_sensibles.csv', delimiter=';', encoding=encoding, dtype=str)
-        print(base_oadc_interdits.columns)
-        # Convert the 'OADC INTERDITS' column to lowercase
-        base_oadc_interdits['OADC INTERDIT'] = base_oadc_interdits['OADC INTERDIT'].str.lower()
-    except FileNotFoundError:
-        oadc_list = []
-
-    print(oadc_list)
+    base_oadc_interdits = charger_liste_oadc_sensibles()
+    print(base_oadc_interdits)
 
     # Chercher dans la colonne EMETTEUR
     df['expediteur_nettoye'] = ""
@@ -82,7 +54,7 @@ def convert(filepath:str, outdir:str, mode=MODE_DEFAUT):  # sourcery skip: use-n
 
     # Lire le fichier avec l'encodage détecté
     encoding = result['encoding']
-    identifiants_CE = pd.read_csv('identifiants_CE.csv', delimiter=';', encoding=encoding, dtype=str)
+    identifiants_ce = pd.read_csv('identifiants_CE.csv', delimiter=';', encoding=encoding, dtype=str)
 
     df['operateur_arcep'] = ""
 
@@ -125,7 +97,7 @@ def convert(filepath:str, outdir:str, mode=MODE_DEFAUT):  # sourcery skip: use-n
                 print(f" - numero nettoyé = {numero} - typologie : {typologie_numero(numero)}")
 
                 # identificaiton opérateur
-                operateur = trouver_operateur(numero, majnum, identifiants_CE)
+                operateur = trouver_operateur(numero, majnum, identifiants_ce)
                 print(f'Opérateur trouve : {operateur}')
                 df.at[i, 'operateur_arcep'] = operateur
             elif emetteur.lower() in oadc_list:
@@ -154,7 +126,7 @@ def convert(filepath:str, outdir:str, mode=MODE_DEFAUT):  # sourcery skip: use-n
                 # numero = normaliser_numero(match.group())
                 df.at[i, 'rebond_nettoye'] = numero_rebond
                 df.at[i, 'typologie_rebond'] = typologie_rebond
-                # operateur = trouver_operateur(numero_rebond, majnum, identifiants_CE)
+                # operateur = trouver_operateur(numero_rebond, majnum, identifiants_ce)
                 # df.at[i, 'opr arcep rebond'] = operateur
                 print(f" - rebond nettoyé = {numero_rebond} - typologie : {typologie_rebond}")
 
@@ -171,6 +143,44 @@ def convert(filepath:str, outdir:str, mode=MODE_DEFAUT):  # sourcery skip: use-n
 
     # Inform the user
     return "Succès", "Conversion réussie!"
+
+
+def charger_liste_oadc_sensibles():
+    # Charger la liste OADC sensibles
+    try:
+        # Détecter l'encodage du fichier
+        with open('oadc_sensibles.csv', 'rb') as f:
+            result = chardet.detect(f.read())
+
+        # Lire le fichier avec l'encodage détecté
+        encoding = result['encoding']
+        base_oadc_interdits = pd.read_csv('oadc_sensibles.csv', delimiter=';', encoding=encoding, dtype=str)
+        print(base_oadc_interdits.columns)
+        # Convert the 'OADC INTERDITS' column to lowercase
+        base_oadc_interdits['OADC INTERDIT'] = base_oadc_interdits['OADC INTERDIT'].str.lower()
+        return base_oadc_interdits
+
+    except FileNotFoundError:
+        return pd.DataFrame(columns=["OADC INTERDIT"])
+
+
+def charger_liste_oadc_connus():
+    # Charger la liste OADC
+    try:
+        # Détecter l'encodage du fichier
+        with open('liste_oadc.csv', 'rb') as f:
+            result = chardet.detect(f.read())
+
+        # Lire le fichier avec l'encodage détecté
+        encoding = result['encoding']
+        df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', encoding=encoding, dtype=str)
+        # df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', dtype=str)
+
+        # oadc_list = df_oadc['OADC'].tolist()
+        oadc_list = [str(value).lower() for value in df_oadc['OADC'].tolist()]
+    except FileNotFoundError:
+        oadc_list = []
+    return oadc_list
 
 
 def extraire_numero_de_texte(texte_source):

@@ -1,7 +1,6 @@
+# from tkinter import messagebox
 import os
 import re
-# from tkinter import messagebox
-
 import chardet
 import pandas as pd
 
@@ -15,129 +14,258 @@ def verifier_mode(mode):
         return MODE_DEFAUT
 
 
-def convert(filepath:str, outdir:str, mode=MODE_DEFAUT):  # sourcery skip: use-named-expression
+# def convert(filepath:str, outdir:str, mode=MODE_DEFAUT):  # sourcery skip: use-named-expression
+#     mode = verifier_mode(mode)
+#     if not filepath:
+#         return "Echec de l'opération : pas de chemin vers le fichier source fourni"
+#
+#     # try:
+#     # Load and process the CSV
+#     # df = pd.read_csv(filepath, delimiter=';', encoding='ISO-8859-1', dtype={'EMETTEUR': str, 'ALIAS_SIGNALANT': str})
+#     df = pd.read_csv(filepath, delimiter=';', encoding='ISO-8859-1', dtype=str)
+#     df.replace({re.compile(r'[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]'): ''}, regex=True, inplace=True)
+#     df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '')
+#     # df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '').str.rstrip('.0')
+#
+#     oadc_list = charger_liste_oadc_connus()
+#     print(oadc_list)
+#
+#     base_oadc_interdits = charger_liste_oadc_sensibles()
+#     print(base_oadc_interdits)
+#
+#     # Chercher dans la colonne EMETTEUR
+#     df['expediteur_nettoye'] = ""
+#     df['typologie_expediteur'] = ""
+#     df['rebond_nettoye'] = ""
+#     df['typologie_rebond'] = ""
+#     df['date_requalifiee'] = ""
+#     df['categorie_no_cible'] = ""
+#     df['mois'] = ""
+#     df['type_protection'] = ''
+#     df['opr arcep rebond'] = ''
+#
+#     # identification des opérateurs de l'éxpéditeur
+#     majnum = pd.read_excel('MAJNUM.xls')
+#
+#     identifiants_ce = charger_identifiants_ce()
+#
+#     df['operateur_arcep'] = ""
+#
+#     # changer d'ordre des colonnes
+#     column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
+#                     'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'date_requalifiee', 'expediteur_nettoye',
+#                     'typologie_expediteur', 'operateur_arcep', 'typologie_rebond', 'categorie_no_cible',
+#                     'categorie_no_cible', 'mois',
+#                     'DATE_RECEPTION',
+#                     'MOIS_RECEPTION',
+#                     'ANALYSE_STOP', 'TYPE_EMETTEUR']
+#
+#     # Check if all columns in column_order are present in df.columns
+#     if set(column_order).issubset(df.columns):
+#         remaining_columns = [col for col in df.columns if col not in column_order]
+#         new_order = column_order + remaining_columns
+#         df = df[new_order]
+#     else:
+#         print("Some columns are missing from the dataframe")
+#
+#     # df['EMETTEUR'] = df['EMETTEUR'].replace('nan', '')
+#     for i, row in df.iterrows():
+#         # extraction de la date
+#         date_full = row['DATE_SIGNALEMENT']
+#         df.at[i, 'date_requalifiee'] = date_full[:10]
+#         df.at[i, 'mois'] = date_full[:7]
+#
+#         # extraction de l'émetteur et
+#         emetteur = row['EMETTEUR']
+#         print(f"emetteur en cours : {emetteur}", end=' ')
+#         if pd.isna(emetteur):
+#             df.at[i, 'expediteur_nettoye'] = ""
+#             df.at[i, 'typologie_expediteur'] = "Non identifié"
+#         else:
+#             numero = extraire_numero_de_texte(emetteur)
+#             if numero:
+#                 # numero = normaliser_numero(match.group())
+#                 df.at[i, 'expediteur_nettoye'] = numero
+#                 df.at[i, 'typologie_expediteur'] = typologie_numero(numero)
+#                 print(f" - numero nettoyé = {numero} - typologie : {typologie_numero(numero)}")
+#
+#                 # identificaiton opérateur
+#                 operateur = trouver_operateur(numero, majnum, identifiants_ce)
+#                 print(f'Opérateur trouve : {operateur}')
+#                 df.at[i, 'operateur_arcep'] = operateur
+#             elif emetteur.lower() in oadc_list:
+#                 df.at[i, 'typologie_expediteur'] = "OADC"
+#                 df.at[i, 'expediteur_nettoye'] = emetteur
+#                 print(f" - numero nettoyé = {emetteur} : typologie : OADC")
+#                 df.at[i, 'type_protection'] = trouver_interdiction(emetteur, base_oadc_interdits)
+#
+#             else:
+#                 df.at[i, 'typologie_expediteur'] = "Non identifié"
+#                 print(f" - non identifié = {emetteur}")
+#
+#         # extraction du numéro de rebond du message
+#         texte_message = row['MESSAGE']
+#         if pd.isna(texte_message):
+#             df.at[i, 'rebond_nettoye'] = ""
+#             df.at[i, 'typologie_rebond'] = "Aucun"
+#         else:
+#             numero_rebond = extraire_numero_de_texte(texte_message)
+#             # message_nettoye = texte_message.replace(' ', '').replace('.', '').replace('-', '')
+#             # match = re.search(r'33\d{13}|0\d{13}|33\d{9}|0\d{9}|118\d{6}|\d{5}|\d{4}',
+#             #                   message_nettoye)
+#             # if match:
+#             if numero_rebond:
+#                 typologie_rebond = typologie_numero(numero_rebond)
+#                 # numero = normaliser_numero(match.group())
+#                 df.at[i, 'rebond_nettoye'] = numero_rebond
+#                 df.at[i, 'typologie_rebond'] = typologie_rebond
+#                 # operateur = trouver_operateur(numero_rebond, majnum, identifiants_ce)
+#                 # df.at[i, 'opr arcep rebond'] = operateur
+#                 print(f" - rebond nettoyé = {numero_rebond} - typologie : {typologie_rebond}")
+#
+#         # print(row['URL_REBOND_SIGNALE'])
+#         if pd.isna(row['URL_REBOND_SIGNALE']):
+#             # df.at[i, 'categorie_no_cible'] = row['typologie_rebond']
+#             df.at[i, 'categorie_no_cible'] = df.at[i, 'typologie_rebond']
+#         else:
+#             df.at[i, 'categorie_no_cible'] = 'URL'
+#
+#         # Save to Excel
+#     outfile = os.path.join(outdir, os.path.basename(filepath).split('.')[0] + '.xlsx')
+#     df.to_excel(outfile, index=False, engine='openpyxl')
+#
+#     # Inform the user
+#     return "Succès", "Conversion réussie!"
+
+def load_csv(filepath: str) -> pd.DataFrame:
+    """Charge le fichier CSV et effectue le nettoyage initial."""
+    df = pd.read_csv(filepath, delimiter=';', encoding='ISO-8859-1', dtype=str)
+    # Remplacement de caractères indésirables
+    df.replace({re.compile(r'[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]'): ''}, regex=True, inplace=True)
+    df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '')
+    return df
+
+def load_metadata() -> dict:
+    """Charge les métadonnées et listes externes utilisées pour le traitement."""
+    oadc_list = charger_liste_oadc_connus()
+    base_oadc_interdits = charger_liste_oadc_sensibles()
+    majnum = pd.read_excel('MAJNUM.xls')
+    identifiants_ce = charger_identifiants_ce()
+    return {
+        'oadc_list': oadc_list,
+        'base_oadc_interdits': base_oadc_interdits,
+        'majnum': majnum,
+        'identifiants_ce': identifiants_ce
+    }
+
+def process_date_fields(df: pd.DataFrame) -> pd.DataFrame:
+    """Ajoute les colonnes 'date_requalifiee' et 'mois' à partir de 'DATE_SIGNALEMENT'."""
+    df['date_requalifiee'] = df['DATE_SIGNALEMENT'].str[:10]
+    df['mois'] = df['DATE_SIGNALEMENT'].str[:7]
+    return df
+
+# Fonctions de traitement par ligne
+
+def process_row(row, metadata) -> pd.Series:
+    """
+    Traite une ligne du DataFrame pour extraire et nettoyer les informations
+    sur l'émetteur et le numéro de rebond.
+    """
+    res = {}
+    # Traitement de l'émetteur
+    emetteur = row.get('EMETTEUR', None)
+    if pd.isna(emetteur):
+        res['expediteur_nettoye'] = ""
+        res['typologie_expediteur'] = "Non identifié"
+        res['operateur_arcep'] = ""
+        res['type_protection'] = ""
+    else:
+        numero = extraire_numero_de_texte(emetteur)
+        if numero:
+            res['expediteur_nettoye'] = numero
+            typ = typologie_numero(numero)
+            res['typologie_expediteur'] = typ
+            res['operateur_arcep'] = trouver_operateur(numero, metadata['majnum'], metadata['identifiants_ce'])
+            res['type_protection'] = ""
+        elif emetteur.lower() in metadata['oadc_list']:
+            res['expediteur_nettoye'] = emetteur
+            res['typologie_expediteur'] = "OADC"
+            res['operateur_arcep'] = ""
+            res['type_protection'] = trouver_interdiction(emetteur, metadata['base_oadc_interdits'])
+        else:
+            res['expediteur_nettoye'] = emetteur
+            res['typologie_expediteur'] = "Non identifié"
+            res['operateur_arcep'] = ""
+            res['type_protection'] = ""
+
+    # Traitement du message pour le numéro de rebond
+    texte_message = row.get('MESSAGE', None)
+    if pd.isna(texte_message):
+        res['rebond_nettoye'] = ""
+        res['typologie_rebond'] = "Aucun"
+    else:
+        numero_rebond = extraire_numero_de_texte(texte_message)
+        if numero_rebond:
+            res['rebond_nettoye'] = numero_rebond
+            res['typologie_rebond'] = typologie_numero(numero_rebond)
+        else:
+            res['rebond_nettoye'] = ""
+            res['typologie_rebond'] = "Aucun"
+
+    # Détermination de la catégorie de cible
+    url_rebond = row.get('URL_REBOND_SIGNALE', None)
+    if pd.isna(url_rebond):
+        res['categorie_no_cible'] = res.get('typologie_rebond', "")
+    else:
+        res['categorie_no_cible'] = "URL"
+
+    return pd.Series(res)
+
+def reorder_columns(df: pd.DataFrame, column_order: list) -> pd.DataFrame:
+    """Réorganise les colonnes du DataFrame en plaçant d'abord celles de column_order."""
+    if set(column_order).issubset(df.columns):
+        remaining_columns = [col for col in df.columns if col not in column_order]
+        new_order = column_order + remaining_columns
+        return df[new_order]
+    else:
+        print("Some columns are missing from the dataframe")
+        return df
+
+# Fonction principale
+
+def convert(filepath: str, outdir: str, mode=MODE_DEFAUT):
     mode = verifier_mode(mode)
     if not filepath:
         return "Echec de l'opération : pas de chemin vers le fichier source fourni"
 
-    # try:
-    # Load and process the CSV
-    # df = pd.read_csv(filepath, delimiter=';', encoding='ISO-8859-1', dtype={'EMETTEUR': str, 'ALIAS_SIGNALANT': str})
-    df = pd.read_csv(filepath, delimiter=';', encoding='ISO-8859-1', dtype=str)
-    df.replace({re.compile(r'[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]'): ''}, regex=True, inplace=True)
-    df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '')
-    # df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '').str.rstrip('.0')
+    # Chargement du CSV et des métadonnées
+    df = load_csv(filepath)
+    metadata = load_metadata()
 
-    oadc_list = charger_liste_oadc_connus()
-    print(oadc_list)
+    # Traitement vectorisé des dates
+    df = process_date_fields(df)
 
-    base_oadc_interdits = charger_liste_oadc_sensibles()
-    print(base_oadc_interdits)
+    # Traitement ligne par ligne pour les colonnes liées à l'émetteur et au rebond
+    processed = df.apply(lambda row: process_row(row, metadata), axis=1)
+    df[['expediteur_nettoye', 'typologie_expediteur', 'operateur_arcep', 'type_protection',
+        'rebond_nettoye', 'typologie_rebond', 'categorie_no_cible']] = processed
 
-    # Chercher dans la colonne EMETTEUR
-    df['expediteur_nettoye'] = ""
-    df['typologie_expediteur'] = ""
-    df['rebond_nettoye'] = ""
-    df['typologie_rebond'] = ""
-    df['date_requalifiee'] = ""
-    df['categorie_no_cible'] = ""
-    df['mois'] = ""
-    df['type_protection'] = ''
-    df['opr arcep rebond'] = ''
+    # Réorganisation des colonnes
+    column_order = [
+        'DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
+        'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'date_requalifiee', 'expediteur_nettoye',
+        'typologie_expediteur', 'operateur_arcep', 'typologie_rebond', 'categorie_no_cible',
+        'mois', 'DATE_RECEPTION', 'MOIS_RECEPTION', 'ANALYSE_STOP', 'TYPE_EMETTEUR'
+    ]
+    df = reorder_columns(df, column_order)
 
-    # identification des opérateurs de l'éxpéditeur
-    majnum = pd.read_excel('MAJNUM.xls')
-
-    identifiants_ce = charger_identifiants_ce()
-
-    df['operateur_arcep'] = ""
-
-    # changer d'ordre des colonnes
-    column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
-                    'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'date_requalifiee', 'expediteur_nettoye',
-                    'typologie_expediteur', 'operateur_arcep', 'typologie_rebond', 'categorie_no_cible',
-                    'categorie_no_cible', 'mois',
-                    'DATE_RECEPTION',
-                    'MOIS_RECEPTION',
-                    'ANALYSE_STOP', 'TYPE_EMETTEUR']
-
-    # Check if all columns in column_order are present in df.columns
-    if set(column_order).issubset(df.columns):
-        remaining_columns = [col for col in df.columns if col not in column_order]
-        new_order = column_order + remaining_columns
-        df = df[new_order]
-    else:
-        print("Some columns are missing from the dataframe")
-
-    # df['EMETTEUR'] = df['EMETTEUR'].replace('nan', '')
-    for i, row in df.iterrows():
-        # extraction de la date
-        date_full = row['DATE_SIGNALEMENT']
-        df.at[i, 'date_requalifiee'] = date_full[:10]
-        df.at[i, 'mois'] = date_full[:7]
-
-        # extraction de l'émetteur et
-        emetteur = row['EMETTEUR']
-        print(f"emetteur en cours : {emetteur}", end=' ')
-        if pd.isna(emetteur):
-            df.at[i, 'expediteur_nettoye'] = ""
-            df.at[i, 'typologie_expediteur'] = "Non identifié"
-        else:
-            numero = extraire_numero_de_texte(emetteur)
-            if numero:
-                # numero = normaliser_numero(match.group())
-                df.at[i, 'expediteur_nettoye'] = numero
-                df.at[i, 'typologie_expediteur'] = typologie_numero(numero)
-                print(f" - numero nettoyé = {numero} - typologie : {typologie_numero(numero)}")
-
-                # identificaiton opérateur
-                operateur = trouver_operateur(numero, majnum, identifiants_ce)
-                print(f'Opérateur trouve : {operateur}')
-                df.at[i, 'operateur_arcep'] = operateur
-            elif emetteur.lower() in oadc_list:
-                df.at[i, 'typologie_expediteur'] = "OADC"
-                df.at[i, 'expediteur_nettoye'] = emetteur
-                print(f" - numero nettoyé = {emetteur} : typologie : OADC")
-                df.at[i, 'type_protection'] = trouver_interdiction(emetteur, base_oadc_interdits)
-
-            else:
-                df.at[i, 'typologie_expediteur'] = "Non identifié"
-                print(f" - non identifié = {emetteur}")
-
-        # extraction du numéro de rebond du message
-        texte_message = row['MESSAGE']
-        if pd.isna(texte_message):
-            df.at[i, 'rebond_nettoye'] = ""
-            df.at[i, 'typologie_rebond'] = "Aucun"
-        else:
-            numero_rebond = extraire_numero_de_texte(texte_message)
-            # message_nettoye = texte_message.replace(' ', '').replace('.', '').replace('-', '')
-            # match = re.search(r'33\d{13}|0\d{13}|33\d{9}|0\d{9}|118\d{6}|\d{5}|\d{4}',
-            #                   message_nettoye)
-            # if match:
-            if numero_rebond:
-                typologie_rebond = typologie_numero(numero_rebond)
-                # numero = normaliser_numero(match.group())
-                df.at[i, 'rebond_nettoye'] = numero_rebond
-                df.at[i, 'typologie_rebond'] = typologie_rebond
-                # operateur = trouver_operateur(numero_rebond, majnum, identifiants_ce)
-                # df.at[i, 'opr arcep rebond'] = operateur
-                print(f" - rebond nettoyé = {numero_rebond} - typologie : {typologie_rebond}")
-
-        # print(row['URL_REBOND_SIGNALE'])
-        if pd.isna(row['URL_REBOND_SIGNALE']):
-            # df.at[i, 'categorie_no_cible'] = row['typologie_rebond']
-            df.at[i, 'categorie_no_cible'] = df.at[i, 'typologie_rebond']
-        else:
-            df.at[i, 'categorie_no_cible'] = 'URL'
-
-        # Save to Excel
+    # Sauvegarde du résultat en Excel
     outfile = os.path.join(outdir, os.path.basename(filepath).split('.')[0] + '.xlsx')
     df.to_excel(outfile, index=False, engine='openpyxl')
 
-    # Inform the user
     return "Succès", "Conversion réussie!"
 
+### suite du code, inchangé
 
 def charger_identifiants_ce():
     # Détecter l'encodage du fichier

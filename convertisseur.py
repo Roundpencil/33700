@@ -9,7 +9,7 @@ MODE_DEFAUT = 'af2m'
 
 
 def verifier_mode(mode):
-    if mode.lower() in ['operateur', 'af2m']:
+    if mode.lower() in ['operateurs', 'af2m']:
         return mode
     else:
         return MODE_DEFAUT
@@ -48,13 +48,7 @@ def convert(filepath:str, outdir:str, mode=MODE_DEFAUT):  # sourcery skip: use-n
     # identification des opérateurs de l'éxpéditeur
     majnum = pd.read_excel('MAJNUM.xls')
 
-    # Détecter l'encodage du fichier
-    with open('identifiants_CE.csv', 'rb') as f:
-        result = chardet.detect(f.read())
-
-    # Lire le fichier avec l'encodage détecté
-    encoding = result['encoding']
-    identifiants_ce = pd.read_csv('identifiants_CE.csv', delimiter=';', encoding=encoding, dtype=str)
+    identifiants_ce = charger_identifiants_ce()
 
     df['operateur_arcep'] = ""
 
@@ -143,6 +137,16 @@ def convert(filepath:str, outdir:str, mode=MODE_DEFAUT):  # sourcery skip: use-n
 
     # Inform the user
     return "Succès", "Conversion réussie!"
+
+
+def charger_identifiants_ce():
+    # Détecter l'encodage du fichier
+    with open('identifiants_CE.csv', 'rb') as f:
+        result = chardet.detect(f.read())
+    # Lire le fichier avec l'encodage détecté
+    encoding = result['encoding']
+    identifiants_ce = pd.read_csv('identifiants_CE.csv', delimiter=';', encoding=encoding, dtype=str)
+    return identifiants_ce
 
 
 def charger_liste_oadc_sensibles():

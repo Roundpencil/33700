@@ -19,6 +19,7 @@ def clean_phone_number(phone_number):
 
 
 def filter_excel_files(input_folder, phone_numbers, urls, output_file):
+
     # Clean the phone numbers before processing
     cleaned_phone_numbers = [clean_phone_number(phone) for phone in phone_numbers]
 
@@ -61,7 +62,7 @@ def filter_excel_files(input_folder, phone_numbers, urls, output_file):
 # urls = ['part_of_url1', 'part_of_url2']
 # output_file = '/path/to/your/output/file.xlsx'
 
-input_folder = r'C:\Users\Pierre TROCME\OneDrive - AFMM\data 33700\data retraitées pour V2 rapports'
+input_folder = r'C:\OD\OneDrive - AFMM\data 33700\data retraitées pour V2 rapports'
 
 phone_numbers = [
     '+33744749865',
@@ -73,26 +74,49 @@ phone_numbers = [
     '+33744896447',
     '+33749255964'
 ]
+phone_numbers = [
+    '+33766352439 ',
+    '+33783696082 ',
+    '+33769414684 ',
+    '+33627961838 ',
+    '+33695350875 ',
+    '+33614117272 ',
+    '+33766941934 ',
+    '+33651714234 ',
+    '+33759646170 ',
+    '+33759648607 ',
+    '+33777268748 ',
+    '+33759667226',
+    '+33759659581 '
+    ,'+33759655758'
+]
+# phone_numbers = [
+#     'NoteDeFrais'
+# ]
 
 ### valeurs de test
 # input_folder = r'C:\Users\Pierre TROCME\OneDrive - AFMM\data 33700\test requisition'
 # phone_numbers = [
 #     '+33637702211'
 # ]
-urls = [
-    'iledefr.com',
-    'navigo-agence.com',
-    'ship-swiss.info',
-    'fr-disneyplus.com',
-    'amendes.gouv-paiement.info',
-    'dhl.com-suivre.info',
-    'connexion-navigo.com',
-    'agences-navigo.com',
-    'ligne-prixtel.com'
-]
-output_file = r'C:\Users\Pierre TROCME\OneDrive - AFMM\data 33700\00_output_requisition.xlsx'
 
-filter_excel_files(input_folder, phone_numbers, urls, output_file)
+# urls = [
+#     'iledefr.com',
+#     'navigo-agence.com',
+#     'ship-swiss.info',
+#     'fr-disneyplus.com',
+#     'amendes.gouv-paiement.info',
+#     'dhl.com-suivre.info',
+#     'connexion-navigo.com',
+#     'agences-navigo.com',
+#     'ligne-prixtel.com'
+# ]
+# urls = [
+#     r'https://vms.lu/'
+# ]
+output_file = r'C:\OD\OneDrive - AFMM\data 33700\00_output_requisition.xlsx'
+
+filter_excel_files(input_folder, phone_numbers, urls = [], output_file=output_file)
 
 
 # import os

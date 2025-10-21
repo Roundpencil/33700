@@ -84,7 +84,7 @@ class Application(tk.Frame):
                 expediteur_nettoye TEXT,
                 typologie_expediteur TEXT,
                 operateur_arcep TEXT,
-                rebond_nettoye TEXT,               -- CORRECTION : Colonne manquante ajoutée
+                rebond_nettoye TEXT,
                 typologie_rebond TEXT,
                 categorie_no_cible TEXT,
                 mois TEXT,

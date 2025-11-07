@@ -50,7 +50,7 @@ class WordFrequencyAnalyzerApp:
         files_frame = ttk.LabelFrame(main_frame, text="1. Fichiers", padding="10")
         files_frame.pack(fill=tk.X, expand=True, pady=(0, 10))
 
-        ttk.Label(files_frame, text="Fichier d'entrée (Excel):").grid(row=0, column=0, sticky="w", padx=5, pady=2)
+        ttk.Label(files_frame, text="Fichier d'entrée (csv):").grid(row=0, column=0, sticky="w", padx=5, pady=2)
         ttk.Entry(files_frame, textvariable=self.input_path, width=70).grid(row=0, column=1, sticky="ew", padx=5)
         ttk.Button(files_frame, text="Parcourir...", command=self.select_input_file).grid(row=0, column=2, padx=5)
 
@@ -188,13 +188,44 @@ class WordFrequencyAnalyzerApp:
             encoding_detected = result['encoding']
 
             print(f"Encodage détecté : {encoding_detected}")
-            reader = pd.read_csv(csv_path, chunksize=c_size, encoding=encoding_detected)
-            for i, df_chunk in enumerate(reader):
-                progress = 10 + int((i / total_chunks) * 80)
-                self.update_status(progress, f"Traitement du bloc {i + 1}/{total_chunks}...")
+            # reader = pd.read_csv(csv_path, chunksize=c_size, encoding=encoding_detected)
+            # for i, df_chunk in enumerate(reader):
+            #     progress = 10 + int((i / total_chunks) * 80)
+            #     self.update_status(progress, f"Traitement du bloc {i + 1}/{total_chunks}...")
+            #
+            #     for text_cell in df_chunk.iloc[:, 0].dropna().astype(str):
+            #         text = text_cell.lower().replace('\n', ' ')
+            #         text = re.sub(r'[^\p{L}\s]', ' ', text, flags=re.UNICODE)
+            #
+            #         words = text.split()
+            #         for original_word in words:
+            #             nfkd_form = unicodedata.normalize('NFKD', original_word)
+            #             normalized_word = "".join([c for c in nfkd_form if not unicodedata.combining(c)])
+            #
+            #             if normalized_word and normalized_word not in processed_stop_words:
+            #                 normalized_word_counts[normalized_word] += 1
+            #                 word_variations[normalized_word].add(original_word)
 
-                for text_cell in df_chunk.iloc[:, 0].dropna().astype(str):
-                    text = text_cell.lower().replace('\n', ' ')
+            #remplacement de la lecture par un fichier txt
+            with open(csv_path, 'r', encoding=encoding_detected, errors='ignore') as f:
+                # Ignorer la première ligne (en-tête)
+                next(f, None)
+
+                line_count = 0
+                chunk_num = 0
+
+                for line in f:
+                    line_count += 1
+
+                    # Mise à jour de la progression tous les c_size lignes
+                    if line_count % c_size == 0:
+                        chunk_num += 1
+                        progress = 10 + int((chunk_num / total_chunks) * 80)
+                        self.update_status(progress, f"Traitement de la ligne {line_count}...")
+
+                    # Traiter la ligne comme du texte brut (ignorer la structure CSV)
+                    # On retire juste les guillemets éventuels en début/fin
+                    text = line.strip().strip('"').lower().replace('\n', ' ')
                     text = re.sub(r'[^\p{L}\s]', ' ', text, flags=re.UNICODE)
 
                     words = text.split()

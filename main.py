@@ -9,7 +9,7 @@ from convertisseur import convert
 
 # todo :
 #  séparer code traitement / lecture fichier / export
-# mettre à jour le format d'export af2m
+#  mettre à jour le format d'export af2m
 #  créer db
 #  ajouter colonnes score phishing (utiliser code évaluation taille cert)
 #  ajouter l'insersion dans la db en fin de traitement

@@ -5,6 +5,7 @@ from tkinter import messagebox
 import os
 import pickle
 
+import database33700
 from GUI import print_gui
 from convertisseur import enrichir, charger_source_dans_dataframe, exporter_df_vers_excel
 
@@ -137,16 +138,30 @@ if __name__ == '__main__':
     sauver_config(args)
     try:
         df = charger_source_dans_dataframe(args.fichier_entree)
+        print("Pré-traitement du fichier d'entrée réussi. \n Début de l'enrichissement")
 
         df_enrichie = enrichir(df,
                                avec_arcep_rebond=args.ajouter_operateurs,
                                analyser_si_isa=args.analyser_si_isa,
                                format_etendu=args.format_etendu,
                                calculer_phishing=args.score_phising)
+
+        print("Fin de l'enrichissement des donnéees.")
+
+        if len(args.db_path) > 1:
+            print("Début de l'insertion dans la base de données.")
+            database33700.exporter_vers_db(db_path=args.dbpath,
+                                           noms_fichier=[args.fichier_entree],
+                                           dfs=[df_enrichie])
+            print("Données enregistrées dans la base de donnée.")
+        else:
+            print("Pas de base de donnée spécifiée en entrée")
+
+        print("Exportation vers Excel en cours.")
+
         exporter_df_vers_excel(df_enrichie, args.fichier_entree, args.dossier_sortie)
 
         messagebox.showinfo("Succès", "Conversion réussie!")
-
 
     except ValueError as e:
         messagebox.showerror("Erreur", str(e))

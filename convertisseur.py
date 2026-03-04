@@ -10,11 +10,8 @@ from pandas import DataFrame
 
 # todo :
 #  mettre à jour le format d'export af2m
-#  ajouter une fcontion "vers db" qui importe dans la db
-#  créer db
 #  ajouter colonnes score phishing (utiliser code évaluation taille cert)
-#  ajouter l'insersion dans la db en fin de traitement
-#  ajouter une focntion pour faire voiture balais sur la base à postériori de la génération (traitements non effectués)
+#  ajouter une focntion + GUI pour faire voiture balais sur la base à postériori de la génération (traitements non effectués)
 #  ajouter l'ajout des pages avec les données calculées / chiffres automatiquement dans un onlget de l'excel (voire les graphes si on peut faire cela...)
 #  ajouter une cfonction pour créer un export sur les x derniers mois entiers sous limite de 1 m de lignes
 
@@ -199,11 +196,11 @@ def charger_source_dans_dataframe(filepath) -> DataFrame:
     df['categorie_no_cible'] = ""
     df['mois'] = ""
     df['type_protection'] = ''
-    df['phishing > 0?'] = ''
-    df['mot clefs'] = ''
+    df['phishing'] = ''
+    df['mots_clefs'] = ''
     df['score_smishing'] = ''
-    df['tous les mots clefs'] = ''
-    df['opr arcep rebond'] = ''
+    df['tous_les_mots_clefs'] = ''
+    df['opr_arcep_rebond'] = ''
     df['traitements'] = ''
     return df
 

@@ -5,22 +5,23 @@ import pandas as pd
 import numpy as np
 import re
 
+import unicodedata
 from pandas import DataFrame
 
 
 # todo :
-#  ajouter colonnes score phishing (utiliser code évaluation taille cert)
 #  mettre à jour le format d'export af2m
 #  ajouter une focntion + GUI pour faire voiture balais sur la base à postériori de la génération (traitements non effectués)
 #  ajouter l'ajout des pages avec les données calculées / chiffres automatiquement dans un onlget de l'excel (voire les graphes si on peut faire cela...)
 #  ajouter une cfonction pour créer un export sur les x derniers mois entiers sous limite de 1 m de lignes
 #  (ou bien le faire automatiquement une fois l'import réussi)?
+#  ajouter paramètre tous mots phishsing et dans les traitements réalisés
 
-#todo : ajouter les paramètres à convert lors de l'appel
 def enrichir(df:DataFrame,
              avec_arcep_rebond=True, calculer_phishing=False, analyser_si_isa=False, format_etendu=False,
              liste_oadc_csv='liste_oadc.csv', oadc_sensibles_csv='oadc_sensibles.csv',
-             identifiants_ce_csv='identifiants_CE.csv'):
+             identifiants_ce_csv='identifiants_CE.csv', mots_clefs_phising_csv="mots_clefs_phising.csv",
+             tous_mots_phishing=False):
 
     # Charger la liste OADC
     try:
@@ -52,9 +53,25 @@ def enrichir(df:DataFrame,
         # Convert the 'OADC INTERDITS' column to lowercase
         base_oadc_interdits['OADC INTERDIT'] = base_oadc_interdits['OADC INTERDIT'].str.lower()
     except FileNotFoundError:
-        oadc_list = []
+        base_oadc_interdits = None
 
     print(oadc_list)
+
+    # Charger la liste mots clefs phishing
+    try:
+        # Détecter l'encodage du fichier
+        with open(mots_clefs_phising_csv, 'rb') as f:
+            result = chardet.detect(f.read())
+
+        # Lire le fichier avec l'encodage détecté
+        encoding = result['encoding']
+        df_oadc = pd.read_csv(liste_oadc_csv, delimiter=';', encoding=encoding, dtype=str)
+        # df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', dtype=str)
+
+        # oadc_list = df_oadc['OADC'].tolist()
+        set_mots_clefs_phising = set([supprimer_accents_et_lower(value) for value in df_oadc['OADC'].tolist()])
+    except FileNotFoundError:
+        set_mots_clefs_phising = set()
 
     #créer un code traitement
     code_traitement = ''
@@ -136,9 +153,31 @@ def enrichir(df:DataFrame,
         else:
             df.at[i, 'categorie_no_cible'] = 'URL'
 
+        if calculer_phishing:
+            set_texte_clean = set(supprimer_accents_et_lower(row['DATE_SIGNALEMENT']))
+            intersection = set_texte_clean.intersection(set_mots_clefs_phising)
+
+            score_phishing = len(intersection)
+            df.at[i, 'score_smishing'] = score_phishing
+            df.at[i, 'phishing'] = 1 if score_phishing else 0
+            if score_phishing:
+                df.at[i, 'mots_clefs'] = next(iter(intersection))
+            if tous_mots_phishing:
+                df.at[i, 'tous_les_mots_clefs'] = ", ".join(intersection)
+
     # Inform the user
     return df
 
+def supprimer_accents_et_lower(texte):
+    """
+    Supprime les accents d'une chaîne de caractères.
+    """
+    if pd.isna(texte):
+        return ""
+    texte = str(texte)
+    texte = unicodedata.normalize("NFD", texte)
+    texte = "".join(c for c in texte if unicodedata.category(c) != "Mn")
+    return texte.lower()
 
 def exporter_df_vers_excel(df: DataFrame, filepath, outdir):
     # Save to Excel

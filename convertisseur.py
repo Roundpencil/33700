@@ -40,6 +40,7 @@ def enrichir(df:DataFrame,
         oadc_list = []
 
     print(oadc_list)
+
     # Charger la liste OADC sensibles
     try:
         # Détecter l'encodage du fichier
@@ -55,29 +56,26 @@ def enrichir(df:DataFrame,
     except FileNotFoundError:
         base_oadc_interdits = None
 
-    print(oadc_list)
-
-    # Charger la liste mots clefs phishing
     try:
-        # Détecter l'encodage du fichier
-        with open(mots_clefs_phising_csv, 'rb') as f:
-            result = chardet.detect(f.read())
+        with open(mots_clefs_phising_csv, encoding="cp850") as f:
+            liste_mots_clefs_phising = [
+                line.strip()
+                for line in f
+                if line.strip()
+            ]
 
-        # Lire le fichier avec l'encodage détecté
-        encoding = result['encoding']
-        df_oadc = pd.read_csv(liste_oadc_csv, delimiter=';', encoding=encoding, dtype=str)
-        # df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', dtype=str)
-
-        # oadc_list = df_oadc['OADC'].tolist()
-        set_mots_clefs_phising = set([supprimer_accents_et_lower(value) for value in df_oadc['OADC'].tolist()])
     except FileNotFoundError:
-        set_mots_clefs_phising = set()
+        liste_mots_clefs_phising = []
+
+    print("liste mots clefs phihising : ")
+    print(liste_mots_clefs_phising)
 
     #créer un code traitement
     code_traitement = ''
     code_traitement += 'O' if avec_arcep_rebond else ''
     code_traitement += 'P' if calculer_phishing else ''
     code_traitement += 'I' if analyser_si_isa else ''
+    code_traitement += 'T' if tous_mots_phishing else ''
     df['traitements'] = code_traitement
 
     # identification des opérateurs de l'éxpéditeur
@@ -154,16 +152,36 @@ def enrichir(df:DataFrame,
             df.at[i, 'categorie_no_cible'] = 'URL'
 
         if calculer_phishing:
-            set_texte_clean = set(supprimer_accents_et_lower(row['DATE_SIGNALEMENT']))
-            intersection = set_texte_clean.intersection(set_mots_clefs_phising)
+            # set_texte_clean = set(supprimer_accents_et_lower(row['DATE_SIGNALEMENT']))
+            # intersection = set_texte_clean.intersection(set_mots_clefs_phising)
+            #
+            # score_phishing = len(intersection)
+            # df.at[i, 'score_smishing'] = score_phishing
+            # df.at[i, 'phishing'] = 1 if score_phishing else 0
+            # if score_phishing:
+            #     df.at[i, 'mots_clefs'] = next(iter(intersection))
+            # if tous_mots_phishing:
+            #     df.at[i, 'tous_les_mots_clefs'] = ", ".join(intersection)
 
-            score_phishing = len(intersection)
-            df.at[i, 'score_smishing'] = score_phishing
-            df.at[i, 'phishing'] = 1 if score_phishing else 0
-            if score_phishing:
-                df.at[i, 'mots_clefs'] = next(iter(intersection))
-            if tous_mots_phishing:
-                df.at[i, 'tous_les_mots_clefs'] = ", ".join(intersection)
+            texte_clean = supprimer_accents_et_lower(texte_message)
+            if not tous_mots_phishing:
+                phishing = next((k for k in liste_mots_clefs_phising if k in texte_clean), None)
+
+                if phishing:
+                    df.at[i, 'phishing'] = 1
+                    df.at[i, 'mots_clefs'] = phishing
+                else:
+                    df.at[i, 'phishing'] = 0
+            else:
+                liste_tous_les_mots_phishing = [k for k in liste_mots_clefs_phising if k in texte_clean]
+                if liste_tous_les_mots_phishing:
+                    df.at[i, 'phishing'] = 1
+                    df.at[i, 'mots_clefs'] = liste_tous_les_mots_phishing[0]
+                    df.at[i, 'tous_les_mots_clefs'] = ", ".join(liste_tous_les_mots_phishing)
+                    df.at[i, 'score_smishing'] = len(liste_tous_les_mots_phishing)
+                else:
+                    df.at[i, 'phishing'] = 0
+                    df.at[i, 'score_smishing'] = 0
 
     # Inform the user
     return df

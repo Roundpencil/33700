@@ -5,15 +5,9 @@ import os
 import pickle
 
 from GUI import print_gui
-from convertisseur import convert
+from convertisseur import enrichir, charger_source_dans_dataframe, exporter_df_vers_excel
 
 # todo :
-#  séparer code traitement / lecture fichier / export
-#  mettre à jour le format d'export af2m
-#  créer db
-#  ajouter colonnes score phishing (utiliser code évaluation taille cert)
-#  ajouter l'insersion dans la db en fin de traitement
-#  ajouter l'ajout des pages données / chiffres automatiquement dans un onlget (voire les graphes si on peut faire cela...)
 #  ajouter GUI pour réquisition
 
 CONFIG_FILE = "config.json"
@@ -140,9 +134,24 @@ if __name__ == '__main__':
     print(f"fichier de config à l'issue de la gui : {args}")
 
     sauver_config(args)
-    retour = convert(args.fichier_entree, args.dossier_sortie)
+    try:
+        df = charger_source_dans_dataframe(args.fichier_entree)
 
-    if not retour:
+        df_enrichie = enrichir(df,
+                               avec_arcep_rebond=args.ajouter_operateurs,
+                               analyser_si_isa=args.analyser_si_isa,
+                               format_etendu=args.format_etendu,
+                               calculer_phishing=args.score_phising)
+        exporter_df_vers_excel(df_enrichie,args.fichier_entree, args.dossier_sortie)
+
         messagebox.showinfo("Succès", "Conversion réussie!")
-    else:
-        messagebox.showerror("Erreur", retour)
+
+
+    except ValueError as e:
+        messagebox.showerror("Erreur", str(e))
+
+    except Exception as e:
+        messagebox.showerror(
+            "Erreur inattendue",
+            f"Une erreur inattendue est survenue :\n{e}"
+    )

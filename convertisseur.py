@@ -5,29 +5,34 @@ import pandas as pd
 import numpy as np
 import re
 
-#todo : ajouter les paramètres à convert lors de l'appel
-def convert(filepath, outdir,
-            avec_arcep_rebond=True, calculer_phishing=False, analyser_si_isa=False, format_etendu=False):
-    if not filepath:
-        return "Veuillez choisir un fichier d'entrée CSV"
+from pandas import DataFrame
 
-    # try:
-    # Load and process the CSV
-    # df = pd.read_csv(self.filepath, delimiter=';', encoding='ISO-8859-1', dtype={'EMETTEUR': str, 'ALIAS_SIGNALANT': str})
-    df = pd.read_csv(filepath, delimiter=';', encoding='ISO-8859-1', dtype=str)
-    df.replace({re.compile(r'[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]'): ''}, regex=True, inplace=True)
-    df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '')
-    # df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '').str.rstrip('.0')
+
+# todo :
+#  mettre à jour le format d'export af2m
+#  ajouter une fcontion "vers db" qui importe dans la db
+#  créer db
+#  ajouter colonnes score phishing (utiliser code évaluation taille cert)
+#  ajouter l'insersion dans la db en fin de traitement
+#  ajouter une focntion pour faire voiture balais sur la base à postériori de la génération (traitements non effectués)
+#  ajouter l'ajout des pages avec les données calculées / chiffres automatiquement dans un onlget de l'excel (voire les graphes si on peut faire cela...)
+#  ajouter une cfonction pour créer un export sur les x derniers mois entiers sous limite de 1 m de lignes
+
+#todo : ajouter les paramètres à convert lors de l'appel
+def enrichir(df:DataFrame,
+             avec_arcep_rebond=True, calculer_phishing=False, analyser_si_isa=False, format_etendu=False,
+             liste_oadc_csv='liste_oadc.csv', oadc_sensibles_csv='oadc_sensibles.csv',
+             identifiants_ce_csv='identifiants_CE.csv'):
 
     # Charger la liste OADC
     try:
         # Détecter l'encodage du fichier
-        with open('liste_oadc.csv', 'rb') as f:
+        with open(liste_oadc_csv, 'rb') as f:
             result = chardet.detect(f.read())
 
         # Lire le fichier avec l'encodage détecté
         encoding = result['encoding']
-        df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', encoding=encoding, dtype=str)
+        df_oadc = pd.read_csv(liste_oadc_csv, delimiter=';', encoding=encoding, dtype=str)
         # df_oadc = pd.read_csv('liste_oadc.csv', delimiter=';', dtype=str)
 
         # oadc_list = df_oadc['OADC'].tolist()
@@ -39,12 +44,12 @@ def convert(filepath, outdir,
     # Charger la liste OADC sensibles
     try:
         # Détecter l'encodage du fichier
-        with open('oadc_sensibles.csv', 'rb') as f:
+        with open(oadc_sensibles_csv, 'rb') as f:
             result = chardet.detect(f.read())
 
         # Lire le fichier avec l'encodage détecté
         encoding = result['encoding']
-        base_oadc_interdits = pd.read_csv('oadc_sensibles.csv', delimiter=';', encoding=encoding, dtype=str)
+        base_oadc_interdits = pd.read_csv(oadc_sensibles_csv, delimiter=';', encoding=encoding, dtype=str)
         print(base_oadc_interdits.columns)
         # Convert the 'OADC INTERDITS' column to lowercase
         base_oadc_interdits['OADC INTERDIT'] = base_oadc_interdits['OADC INTERDIT'].str.lower()
@@ -53,46 +58,25 @@ def convert(filepath, outdir,
 
     print(oadc_list)
 
-    # Chercher dans la colonne EMETTEUR
-    df['expediteur_nettoye'] = ""
-    df['typologie_expediteur'] = ""
-    df['rebond_nettoye'] = ""
-    df['typologie_rebond'] = ""
-    df['date_requalifiee'] = ""
-    df['categorie_no_cible'] = ""
-    df['mois'] = ""
-    df['type_protection'] = ''
-    df['opr arcep rebond'] = ''
+    #créer un code traitement
+    code_traitement = ''
+    code_traitement += 'O' if avec_arcep_rebond else ''
+    code_traitement += 'P' if calculer_phishing else ''
+    code_traitement += 'I' if analyser_si_isa else ''
+    df['traitements'] = code_traitement
 
     # identification des opérateurs de l'éxpéditeur
     majnum = pd.read_excel('MAJNUM.xls')
 
     # Détecter l'encodage du fichier
-    with open('identifiants_CE.csv', 'rb') as f:
+    with open(identifiants_ce_csv, 'rb') as f:
         result = chardet.detect(f.read())
 
     # Lire le fichier avec l'encodage détecté
     encoding = result['encoding']
-    identifiants_CE = pd.read_csv('identifiants_CE.csv', delimiter=';', encoding=encoding, dtype=str)
+    identifiants_CE = pd.read_csv(identifiants_ce_csv, delimiter=';', encoding=encoding, dtype=str)
 
     df['operateur_arcep'] = ""
-
-    # changer d'ordre des colonnes
-    column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
-                    'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'date_requalifiee', 'expediteur_nettoye',
-                    'typologie_expediteur', 'operateur_arcep', 'typologie_rebond', 'categorie_no_cible',
-                    'categorie_no_cible', 'mois',
-                    'DATE_RECEPTION',
-                    'MOIS_RECEPTION',
-                    'ANALYSE_STOP', 'TYPE_EMETTEUR']
-
-    # Check if all columns in column_order are present in df.columns
-    if set(column_order).issubset(df.columns):
-        remaining_columns = [col for col in df.columns if col not in column_order]
-        new_order = column_order + remaining_columns
-        df = df[new_order]
-    else:
-        print("Some columns are missing from the dataframe")
 
     # df['EMETTEUR'] = df['EMETTEUR'].replace('nan', '')
     for i, row in df.iterrows():
@@ -154,12 +138,62 @@ def convert(filepath, outdir,
         else:
             df.at[i, 'categorie_no_cible'] = 'URL'
 
-        # Save to Excel
+    # Inform the user
+    return df
+
+
+def exporter_df_vers_excel(df: DataFrame, filepath, outdir):
+    # Save to Excel
+    # changer d'ordre des colonnes
+    # todo :garder uniquement les colonnes qui nous intéressent en fontion des paramètres fournis
+    column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
+                    'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'date_requalifiee', 'expediteur_nettoye',
+                    'typologie_expediteur', 'operateur_arcep', 'typologie_rebond', 'categorie_no_cible',
+                    'categorie_no_cible', 'mois',
+                    'DATE_RECEPTION',
+                    'MOIS_RECEPTION',
+                    'ANALYSE_STOP', 'TYPE_EMETTEUR']
+
+    # Check if all columns in column_order are present in df.columns
+    if set(column_order).issubset(df.columns):
+        remaining_columns = [col for col in df.columns if col not in column_order]
+        new_order = column_order + remaining_columns
+        df = df[new_order]
+    else:
+        print("Some columns are missing from the dataframe")
+
     outfile = os.path.join(outdir, os.path.basename(filepath).split('.')[0] + '.xlsx')
     df.to_excel(outfile, index=False, engine='openpyxl')
 
-    # Inform the user
-    return ""
+
+def charger_source_dans_dataframe(filepath) -> DataFrame:
+    if not filepath:
+        raise ValueError("Veuillez choisir un fichier d'entrée CSV")
+
+    # try:
+    # Load and process the CSV
+    # df = pd.read_csv(self.filepath, delimiter=';', encoding='ISO-8859-1', dtype={'EMETTEUR': str, 'ALIAS_SIGNALANT': str})
+    df = pd.read_csv(filepath, delimiter=';', encoding='ISO-8859-1', dtype=str)
+    df.replace({re.compile(r'[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]'): ''}, regex=True, inplace=True)
+    df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '')
+    # df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '').str.rstrip('.0')
+
+    # ajouter les colonnes pour avoir le bon format de dataframe
+    df['expediteur_nettoye'] = ""
+    df['typologie_expediteur'] = ""
+    df['rebond_nettoye'] = ""
+    df['typologie_rebond'] = ""
+    df['date_requalifiee'] = ""
+    df['categorie_no_cible'] = ""
+    df['mois'] = ""
+    df['type_protection'] = ''
+    df['phishing > 0?'] = ''
+    df['mot clefs'] = ''
+    df['score_smishing'] = ''
+    df['tous les mots clefs'] = ''
+    df['opr arcep rebond'] = ''
+    df['traitements'] = ''
+    return df
 
 
 def extraire_numero_de_texte(texte_source):

@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
         if len(args.db_path) > 1:
             print("Début de l'insertion dans la base de données.")
-            database33700.exporter_vers_db(db_path=args.dbpath,
+            database33700.exporter_vers_db(db_path=args.db_path,
                                            noms_fichier=[args.fichier_entree],
                                            dfs=[df_enrichie])
             print("Données enregistrées dans la base de donnée.")

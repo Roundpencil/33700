@@ -1,6 +1,7 @@
 import sqlite3
 from pandas import DataFrame
 from datetime import datetime
+from openpyxl import Workbook
 
 def exporter_vers_db(
     db_path: str,
@@ -120,3 +121,72 @@ def exporter_vers_db(
             bilan["lignes_inserees_total"] += nb
 
     return bilan
+
+def exporter_base_vers_excel(db_path, output_path, max_rows=1_000_000):
+    table = "base_donnees"
+    fetch_batch = 10000
+
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+
+    # 1️⃣ compter les lignes par mois
+    cur.execute(f"""
+        SELECT mois, COUNT(*) AS n
+        FROM {table}
+        WHERE mois IS NOT NULL AND TRIM(mois) <> ''
+        GROUP BY mois
+        ORDER BY mois DESC
+    """)
+
+    rows = cur.fetchall()
+
+    selected_months = []
+    total = 0
+
+    for mois, n in rows:
+        if total + n > max_rows:
+            break
+        selected_months.append(mois)
+        total += n
+
+    if not selected_months:
+        print("Aucun mois sélectionné.")
+        conn.close()
+        return
+
+    print("Mois retenus :", selected_months)
+    print("Total lignes :", total)
+
+    # 2️⃣ requête pour récupérer les données
+    placeholders = ",".join(["?"] * len(selected_months))
+
+    query = f"""
+        SELECT *
+        FROM {table}
+        WHERE mois IN ({placeholders})
+        ORDER BY mois DESC, id ASC
+    """
+
+    cur.execute(query, selected_months)
+
+    # 3️⃣ création Excel (mode streaming)
+    wb = Workbook(write_only=True)
+    ws = wb.create_sheet("export")
+
+    # en-têtes
+    columns = [d[0] for d in cur.description]
+    ws.append(columns)
+
+    # écriture par batch
+    while True:
+        batch = cur.fetchmany(fetch_batch)
+        if not batch:
+            break
+        for row in batch:
+            ws.append(row)
+
+    wb.save(output_path)
+
+    conn.close()
+
+    print(f"Export terminé → {output_path}")

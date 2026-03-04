@@ -15,6 +15,7 @@ from pandas import DataFrame
 #  ajouter l'ajout des pages avec les données calculées / chiffres automatiquement dans un onlget de l'excel (voire les graphes si on peut faire cela...)
 #  ajouter une cfonction pour créer un export sur les x derniers mois entiers sous limite de 1 m de lignes
 #  (ou bien le faire automatiquement une fois l'import réussi)?
+#  ajouter une barre de progression et un observatoire tous les 1000 lignes ui estime l'heure de fin
 
 def enrichir(df:DataFrame,
              avec_arcep_rebond=True, calculer_phishing=False, analyser_si_isa=False, format_etendu=False,
@@ -199,11 +200,10 @@ def supprimer_accents_et_lower(texte):
 def exporter_df_vers_excel(df: DataFrame, filepath, outdir):
     # Save to Excel
     # changer d'ordre des colonnes
-    # todo :garder uniquement les colonnes qui nous intéressent en fontion des paramètres fournis
     column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
                     'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'date_requalifiee', 'expediteur_nettoye',
                     'typologie_expediteur', 'operateur_arcep', 'typologie_rebond', 'categorie_no_cible',
-                    'categorie_no_cible', 'mois',
+                    'categorie_no_cible', 'mois', 'phishing', 'mots_clefs', 'score_smishing', 'tous_les_mots_clefs',
                     'DATE_RECEPTION',
                     'MOIS_RECEPTION',
                     'ANALYSE_STOP', 'TYPE_EMETTEUR']
@@ -214,7 +214,8 @@ def exporter_df_vers_excel(df: DataFrame, filepath, outdir):
         new_order = column_order + remaining_columns
         df = df[new_order]
     else:
-        print("Some columns are missing from the dataframe")
+        missing = set(column_order) - set(df.columns)
+        print(f"Some columns are missing from the dataframe{', '.join(missing)}")
 
     outfile = os.path.join(outdir, os.path.basename(filepath).split('.')[0] + '.xlsx')
     df.to_excel(outfile, index=False, engine='openpyxl')

@@ -10,6 +10,8 @@ from pandas import DataFrame
 
 
 # todo :
+#  réordonner les colonnes même quand on est dans l'export complet
+#  si on est dans les nouvelles lignes, ne pas lancer de traitement pour les fichiers qui y sont déjà
 #  ajouter une focntion + GUI pour faire voiture balais sur la base à postériori de la génération (traitements non effectués)
 #  ajouter l'ajout des pages avec les données calculées / chiffres automatiquement dans un onlget de l'excel (voire les graphes si on peut faire cela...)
 #  ajouter une barre de progression et un observatoire tous les 1000 lignes ui estime l'heure de fin

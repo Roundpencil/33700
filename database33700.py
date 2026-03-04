@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from pandas import DataFrame
 from datetime import datetime
@@ -122,7 +123,7 @@ def exporter_vers_db(
 
     return bilan
 
-def exporter_base_vers_excel(db_path, output_path, max_rows=1_000_000):
+def exporter_base_vers_excel(db_path, outdir, filepath, max_rows=1_000_000):
     table = "base_donnees"
     fetch_batch = 10000
 
@@ -184,7 +185,7 @@ def exporter_base_vers_excel(db_path, output_path, max_rows=1_000_000):
             break
         for row in batch:
             ws.append(row)
-
+    output_path = os.path.join(outdir, os.path.basename(filepath).split('.')[0] + '.xlsx')
     wb.save(output_path)
 
     conn.close()

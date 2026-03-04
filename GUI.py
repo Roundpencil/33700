@@ -13,12 +13,14 @@ def print_gui(args=None):
         args = argparse.Namespace(dossier_sortie=".", fichier_entree=".", db_path=".",
                                   ajouter_operateurs=True, score_phising=True)
 
+    print(args)
     dossier_sortie_var = tk.StringVar(value=getattr(args, "dossier_sortie", ""))
     filepath_var = tk.StringVar(value=getattr(args, "fichier_entree", ""))
     db_path_var = tk.StringVar(value=getattr(args, "db_path", ""))
     ajouter_operateurs_var = tk.BooleanVar(value=getattr(args, "ajouter_operateurs", True))
     score_phising_var = tk.BooleanVar(value=getattr(args, "score_phising", True))
     analyser_si_isa_var = tk.BooleanVar(value=getattr(args, "analyser_si_isa", True))
+    contenu_xls_var = tk.StringVar(value=getattr(args, "contenu_xls", "complet"))
 
     def browse_directory(var: tk.StringVar):
         dirname = filedialog.askdirectory()
@@ -60,6 +62,21 @@ def print_gui(args=None):
         variable=analyser_si_isa_var
     ).grid(row=5, column=1, sticky="w", padx=4, pady=4)
 
+    ttk.Label(root, text="Contenu du fichier xls généré").grid(row=6, column=0, sticky="w", padx=4, pady=4)
+
+    ttk.Radiobutton(
+        root,
+        text="Créer un fichier complet",
+        variable=contenu_xls_var,
+        value="complet"
+    ).grid(row=6, column=1, sticky="w", padx=4, pady=4)
+
+    ttk.Radiobutton(
+        root,
+        text="Exporter uniquement les nouvelles lignes",
+        variable=contenu_xls_var,
+        value="nouveaux"
+    ).grid(row=7, column=1, sticky="w", padx=4, pady=4)
 
     ttk.Button(root, text="Convertir!", command=lambda: killandreturn()).grid(row=8, column=1, pady=10)
 
@@ -70,6 +87,7 @@ def print_gui(args=None):
         args.ajouter_operateurs = ajouter_operateurs_var.get()
         args.score_phising = score_phising_var.get()
         args.analyser_si_isa = analyser_si_isa_var.get()
+        args.contenu_xls = contenu_xls_var.get()
         root.destroy()
 
     root.mainloop()

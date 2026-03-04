@@ -20,17 +20,19 @@ def charger_derniere_config(args):
         # si oui je le charge
         with open(CONFIG_FILE, "r", encoding="utf-8") as f:
             config = json.load(f)
-        if hasattr(args, "dossier_sortie"):
+        if hasattr(config, "dossier_sortie"):
             args.dossier_sortie = config.get("dossier_sortie")
-        if hasattr(args, "db_path"):
+        if hasattr(config, "db_path"):
             args.db_path = config.get("db_path")
-        if hasattr(args, "ajouter_operateurs"):
+        if hasattr(config, "ajouter_operateurs"):
             args.ajouter_operateurs = config.get("ajouter_operateurs")
-        if hasattr(args, "db_path"):
+        if hasattr(config, "db_path"):
             args.score_phising = config.get("score_phising")
-        if hasattr(args, "analyser_si_isa"):
+        if hasattr(config, "analyser_si_isa"):
             args.analyser_si_isa = config.get("analyser_si_isa")
-        if hasattr(args, "format_etendu"):
+        if hasattr(config, "contenu_xls"):
+            args.contenu_xls = config.get("contenu_xls")
+        if hasattr(config, "format_etendu"):
             args.format_etendu = config.get("format_etendu")
 
 
@@ -52,7 +54,8 @@ def sauver_config(args):
         "ajouter_operateurs" : args.ajouter_operateurs,
         "score_phising" : args.score_phising,
         "analyser_si_isa": args.analyser_si_isa,
-        "format_etendu": args.format_etendu
+        "format_etendu": args.format_etendu,
+        "contenu_xls": args.contenu_xls
     }
 
     with (open(CONFIG_FILE, "w", encoding="utf-8") as f):
@@ -90,6 +93,13 @@ if __name__ == '__main__':
         '--db_path',
         type=str,
         default='./test_db',
+        help="Chemin vers la base de données locale (par défaut: './test_db')"
+    )
+
+    parser.add_argument(
+        '--contenu_xls',
+        type=str,
+        default='complet',
         help="Chemin vers la base de données locale (par défaut: './test_db')"
     )
 
@@ -159,7 +169,12 @@ if __name__ == '__main__':
 
         print("Exportation vers Excel en cours.")
 
-        exporter_df_vers_excel(df_enrichie, args.fichier_entree, args.dossier_sortie)
+        if args.contenu_xls == 'nouveaux':
+            exporter_df_vers_excel(df_enrichie, args.fichier_entree, args.dossier_sortie)
+        elif args.contenu_xls == 'complet':
+            database33700.exporter_base_vers_excel(db_path=args.db_path,
+                                                   filepath=args.fichier_entree,
+                                                   outdir = args.dossier_sortie)
 
         messagebox.showinfo("Succès", "Conversion réussie!")
 

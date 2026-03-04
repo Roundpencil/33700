@@ -10,11 +10,8 @@ from pandas import DataFrame
 
 
 # todo :
-#  mettre à jour le format d'export af2m
 #  ajouter une focntion + GUI pour faire voiture balais sur la base à postériori de la génération (traitements non effectués)
 #  ajouter l'ajout des pages avec les données calculées / chiffres automatiquement dans un onlget de l'excel (voire les graphes si on peut faire cela...)
-#  ajouter une cfonction pour créer un export sur les x derniers mois entiers sous limite de 1 m de lignes
-#  (ou bien le faire automatiquement une fois l'import réussi)?
 #  ajouter une barre de progression et un observatoire tous les 1000 lignes ui estime l'heure de fin
 
 def enrichir(df:DataFrame,

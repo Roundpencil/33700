@@ -1,5 +1,6 @@
 import argparse
 import json
+import traceback
 from tkinter import messagebox
 import os
 import pickle
@@ -142,7 +143,7 @@ if __name__ == '__main__':
                                analyser_si_isa=args.analyser_si_isa,
                                format_etendu=args.format_etendu,
                                calculer_phishing=args.score_phising)
-        exporter_df_vers_excel(df_enrichie,args.fichier_entree, args.dossier_sortie)
+        exporter_df_vers_excel(df_enrichie, args.fichier_entree, args.dossier_sortie)
 
         messagebox.showinfo("Succès", "Conversion réussie!")
 
@@ -154,4 +155,5 @@ if __name__ == '__main__':
         messagebox.showerror(
             "Erreur inattendue",
             f"Une erreur inattendue est survenue :\n{e}"
-    )
+        )
+        traceback.print_exception(e)

@@ -173,8 +173,20 @@ def charger_source_dans_dataframe(filepath) -> DataFrame:
     # try:
     # Load and process the CSV
     # df = pd.read_csv(self.filepath, delimiter=';', encoding='ISO-8859-1', dtype={'EMETTEUR': str, 'ALIAS_SIGNALANT': str})
+
     df = pd.read_csv(filepath, delimiter=';', encoding='ISO-8859-1', dtype=str)
-    df.replace({re.compile(r'[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]'): ''}, regex=True, inplace=True)
+
+    # méthode qui marchait bien avant warning :
+    # df.replace({re.compile(r'[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]'): ''}, regex=True, inplace=True)
+
+    # remplacée par :
+    pattern = r'[\x01-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]'
+
+    df = df.apply(
+        lambda col: col.str.replace(pattern, '', regex=True)
+        if col.dtype == "object" else col
+    )
+
     df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '')
     # df['ALIAS_SIGNALANT'] = df['ALIAS_SIGNALANT'].astype(str).replace('nan', '').str.rstrip('.0')
 

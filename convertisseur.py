@@ -15,7 +15,6 @@ from pandas import DataFrame
 #  ajouter l'ajout des pages avec les données calculées / chiffres automatiquement dans un onlget de l'excel (voire les graphes si on peut faire cela...)
 #  ajouter une cfonction pour créer un export sur les x derniers mois entiers sous limite de 1 m de lignes
 #  (ou bien le faire automatiquement une fois l'import réussi)?
-#  ajouter paramètre tous mots phishsing et dans les traitements réalisés
 
 def enrichir(df:DataFrame,
              avec_arcep_rebond=True, calculer_phishing=False, analyser_si_isa=False, format_etendu=False,

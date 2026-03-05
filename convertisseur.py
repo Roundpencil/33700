@@ -10,11 +10,16 @@ from pandas import DataFrame
 
 
 # todo :
-#  réordonner les colonnes même quand on est dans l'export complet
-#  si on est dans les nouvelles lignes, ne pas lancer de traitement pour les fichiers qui y sont déjà
-#  ajouter une focntion + GUI pour faire voiture balais sur la base à postériori de la génération (traitements non effectués)
+#  vérifier au lancement si on est dans les nouvelles lignes:
+#   si oui afficher message : voulez-vous refaire traitement alors qu'un export suffit
+#  ajouter une fonction + GUI pour faire voiture balais sur la base à postériori de la génération (traitements non effectués) + proposer de faire tourner pendant X heures pour éviter boucle infinie
 #  ajouter l'ajout des pages avec les données calculées / chiffres automatiquement dans un onlget de l'excel (voire les graphes si on peut faire cela...)
 #  ajouter une barre de progression et un observatoire tous les 1000 lignes ui estime l'heure de fin
+#  permettre de relancer un calcul smishing / opérateurs qui écrase l'ancien
+#  ajouter options pour générer rapport sur d'autre dates que les 3 derniers mois
+
+# todo :
+#  ajouter GUI pour réquisition
 
 def enrichir(df:DataFrame,
              avec_arcep_rebond=True, calculer_phishing=False, analyser_si_isa=False, format_etendu=False,
@@ -198,6 +203,12 @@ def supprimer_accents_et_lower(texte):
 
 def exporter_df_vers_excel(df: DataFrame, filepath, outdir):
     # Save to Excel
+
+    outfile = os.path.join(outdir, os.path.basename(filepath).split('.')[0] + '.xlsx')
+    df.to_excel(outfile, index=False, engine='openpyxl')
+
+
+def reordonner_colonnes_df_pour_export(df: DataFrame) -> DataFrame:
     # changer d'ordre des colonnes
     column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
                     'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'date_requalifiee', 'expediteur_nettoye',
@@ -214,10 +225,9 @@ def exporter_df_vers_excel(df: DataFrame, filepath, outdir):
         df = df[new_order]
     else:
         missing = set(column_order) - set(df.columns)
-        print(f"Some columns are missing from the dataframe{', '.join(missing)}")
-
-    outfile = os.path.join(outdir, os.path.basename(filepath).split('.')[0] + '.xlsx')
-    df.to_excel(outfile, index=False, engine='openpyxl')
+        print(f"Impossible de préparer les colonnes pour l'export, certaines colonnes nécessaires sont manquantes \n"
+              f"{', '.join(missing)}")
+    return df
 
 
 def charger_source_dans_dataframe(filepath) -> DataFrame:

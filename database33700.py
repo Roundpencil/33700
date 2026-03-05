@@ -53,7 +53,7 @@ def exporter_vers_db(
             DATE_RECEPTION TEXT,
             MOIS_RECEPTION TEXT,
             ANALYSE_STOP TEXT,
-            YPE_EMETTEUR TEXT,
+            TYPE_EMETTEUR TEXT,
             CANAL TEXT,
             EMETTEUR_NETTOYE TEXT,
             rebond_nettoye TEXT,

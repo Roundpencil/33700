@@ -7,10 +7,8 @@ import pickle
 
 import database33700
 from GUI import print_gui
-from convertisseur import enrichir, charger_source_dans_dataframe, exporter_df_vers_excel
-
-# todo :
-#  ajouter GUI pour réquisition
+from convertisseur import enrichir, charger_source_dans_dataframe, exporter_df_vers_excel, \
+    reordonner_colonnes_df_pour_export
 
 CONFIG_FILE = "config.json"
 
@@ -170,8 +168,10 @@ if __name__ == '__main__':
         print("Exportation vers Excel en cours.")
 
         if args.contenu_xls == 'nouveaux':
+            df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
             exporter_df_vers_excel(df_enrichie, args.fichier_entree, args.dossier_sortie)
         elif args.contenu_xls == 'complet':
+            df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
             database33700.exporter_base_vers_excel(db_path=args.db_path,
                                                    filepath=args.fichier_entree,
                                                    outdir = args.dossier_sortie)

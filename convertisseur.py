@@ -10,6 +10,7 @@ from pandas import DataFrame
 
 
 # todo :
+#  faire évoluer la classification pour ajouter numéros de tel rebond sans url
 #  vérifier au lancement si on est dans les nouvelles lignes:
 #   si oui afficher message : voulez-vous refaire traitement alors qu'un export suffit
 #  ajouter une fonction + GUI pour faire voiture balais sur la base à postériori de la génération (traitements non effectués) + proposer de faire tourner pendant X heures pour éviter boucle infinie

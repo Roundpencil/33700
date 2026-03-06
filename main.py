@@ -1,49 +1,54 @@
 import argparse
 import json
 import traceback
+from datetime import datetime
 from tkinter import messagebox
 import os
 import pickle
 
 import database33700
-from GUI import print_gui
+from GUI_parametres import print_gui
 from convertisseur import enrichir, charger_source_dans_dataframe, exporter_df_vers_excel, \
     reordonner_colonnes_df_pour_export
 
 CONFIG_FILE = "config.json"
 
-def charger_derniere_config(args):
+def charger_derniere_config(args_a_enrichir):
     # est-ce que 'jai un fichier json?
     if os.path.exists(CONFIG_FILE):
+        print("fichier de configuration trouvé")
         # si oui je le charge
         with open(CONFIG_FILE, "r", encoding="utf-8") as f:
             config = json.load(f)
-        if hasattr(config, "dossier_sortie"):
-            args.dossier_sortie = config.get("dossier_sortie")
-        if hasattr(config, "db_path"):
-            args.db_path = config.get("db_path")
-        if hasattr(config, "ajouter_operateurs"):
-            args.ajouter_operateurs = config.get("ajouter_operateurs")
-        if hasattr(config, "db_path"):
-            args.score_phising = config.get("score_phising")
-        if hasattr(config, "analyser_si_isa"):
-            args.analyser_si_isa = config.get("analyser_si_isa")
-        if hasattr(config, "contenu_xls"):
-            args.contenu_xls = config.get("contenu_xls")
-        if hasattr(config, "format_etendu"):
-            args.format_etendu = config.get("format_etendu")
-
+        # if hasattr(config, "dossier_sortie"):
+        #     args_a_enrichir.dossier_sortie = config.get("dossier_sortie")
+        #     print("pouet")
+        # if hasattr(config, "db_path"):
+        #     args_a_enrichir.db_path = config.get("db_path")
+        # if hasattr(config, "ajouter_operateurs"):
+        #     args_a_enrichir.ajouter_operateurs = config.get("ajouter_operateurs")
+        # if hasattr(config, "db_path"):
+        #     args_a_enrichir.score_phising = config.get("score_phising")
+        # if hasattr(config, "analyser_si_isa"):
+        #     args_a_enrichir.analyser_si_isa = config.get("analyser_si_isa")
+        # if hasattr(config, "contenu_xls"):
+        #     args_a_enrichir.contenu_xls = config.get("contenu_xls")
+        # if hasattr(config, "format_etendu"):
+        #     args_a_enrichir.format_etendu = config.get("format_etendu")
+        for k, v in config.items():
+            if hasattr(args_a_enrichir, k):
+                setattr(args_a_enrichir, k, v)
 
     # sinon je regarde si j'ai un pickle
     else:
         try:
             with open("last_dir.pkl", "rb") as f:
-                args.dossier_sortie = pickle.load(f)
+                args_a_enrichir.dossier_sortie = pickle.load(f)
         except (FileNotFoundError, EOFError):
             default_dir = os.path.join(os.path.dirname(__file__), "Fichiers sortie Excel")
             os.makedirs(default_dir, exist_ok=True)  # Creates the default directory if it doesn't exist
-            args.dossier_sortie = default_dir
-    return args
+            args_a_enrichir.dossier_sortie = default_dir
+    return args_a_enrichir
 
 def sauver_config(args):
     config_out = {
@@ -132,7 +137,7 @@ if __name__ == '__main__':
 
     # Parser les arguments
     args = parser.parse_args()
-    print(args)
+    print(f"arguments au lancement du programme = {args}")
 
     if not args.config_vierge:
         charger_derniere_config(args)
@@ -148,11 +153,13 @@ if __name__ == '__main__':
         df = charger_source_dans_dataframe(args.fichier_entree)
         print("Pré-traitement du fichier d'entrée réussi. \n Début de l'enrichissement")
 
+        debut_conversion = datetime.now()
         df_enrichie = enrichir(df,
                                avec_arcep_rebond=args.ajouter_operateurs,
                                analyser_si_isa=args.analyser_si_isa,
                                format_etendu=args.format_etendu,
                                calculer_phishing=args.score_phising)
+        fin_conversion = datetime.now()
 
         print("Fin de l'enrichissement des donnéees.")
 
@@ -176,7 +183,8 @@ if __name__ == '__main__':
                                                    filepath=args.fichier_entree,
                                                    outdir = args.dossier_sortie)
 
-        messagebox.showinfo("Succès", "Conversion réussie!")
+        messagebox.showinfo("Succès", f"Conversion réussie! \n"
+                                      f"durée de la conversion : {fin_conversion - debut_conversion}")
 
     except ValueError as e:
         messagebox.showerror("Erreur", str(e))

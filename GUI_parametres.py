@@ -13,7 +13,8 @@ def print_gui(args=None):
         args = argparse.Namespace(dossier_sortie=".", fichier_entree=".", db_path=".",
                                   ajouter_operateurs=True, score_phising=True)
 
-    print(args)
+    print(f"arguments en entrée de la GUI : = {args}")
+
     dossier_sortie_var = tk.StringVar(value=getattr(args, "dossier_sortie", ""))
     filepath_var = tk.StringVar(value=getattr(args, "fichier_entree", ""))
     db_path_var = tk.StringVar(value=getattr(args, "db_path", ""))

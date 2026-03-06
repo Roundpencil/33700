@@ -9,25 +9,32 @@ import unicodedata
 from pandas import DataFrame
 
 
-# todo :
-#  faire évoluer la classification pour ajouter numéros de tel rebond sans url
+# todo QOL:
 #  vérifier au lancement si on est dans les nouvelles lignes:
 #   si oui afficher message : voulez-vous refaire traitement alors qu'un export suffit
+#  ajouter une barre de progression et un observatoire tous les 1000 lignes ui estime l'heure de fin
+
+#todo, moins urgent :
 #  ajouter une fonction + GUI pour faire voiture balais sur la base à postériori de la génération (traitements non effectués) + proposer de faire tourner pendant X heures pour éviter boucle infinie
 #  ajouter l'ajout des pages avec les données calculées / chiffres automatiquement dans un onlget de l'excel (voire les graphes si on peut faire cela...)
-#  ajouter une barre de progression et un observatoire tous les 1000 lignes ui estime l'heure de fin
 #  permettre de relancer un calcul smishing / opérateurs qui écrase l'ancien
 #  ajouter options pour générer rapport sur d'autre dates que les 3 derniers mois
+#  ajouter le dl du dernier fichier CE : https://extranet.arcep.fr/uploads/identifiants_CE.csv
+#  ajouter le dl du dernier majnum : https://extranet.arcep.fr/uploads/MAJNUM.csv
 
 # todo :
 #  ajouter GUI pour réquisition
 
+def observateur_basique(iteration, iterations):
+    print(f"Itération {iteration} sur {iterations}")
+
 def enrichir(df:DataFrame,
              avec_arcep_rebond=True, calculer_phishing=False, analyser_si_isa=False, format_etendu=False,
              liste_oadc_csv='liste_oadc.csv', oadc_sensibles_csv='oadc_sensibles.csv',
-             identifiants_ce_csv='identifiants_CE.csv', mots_clefs_phising_csv="mots_clefs_phising.csv",
-             tous_mots_phishing=False):
+             identifiants_ce_csv='identifiants_ce.csv', mots_clefs_phising_csv="mots_clefs_phising.csv",
+             tous_mots_phishing=False, majnum_csv='MAJNUM.csv', observateur = observateur_basique):
 
+    nombre_lignes = len(df)
     # Charger la liste OADC
     try:
         # Détecter l'encodage du fichier
@@ -84,7 +91,18 @@ def enrichir(df:DataFrame,
     df['traitements'] = code_traitement
 
     # identification des opérateurs de l'éxpéditeur
-    majnum = pd.read_excel('MAJNUM.xls')
+    # majnum = pd.read_excel('MAJNUM.xls')
+    
+    # Détecter l'encodage du fichier
+    with open(majnum_csv, 'rb') as f:
+        result = chardet.detect(f.read())
+
+    # Lire le fichier avec l'encodage détecté
+    encoding = result['encoding']
+    majnum = pd.read_csv(majnum_csv, delimiter=';', encoding=encoding, dtype=str)
+    # s'assurer que les ranches sont bien lues
+    majnum['Tranche_Debut'] = pd.to_numeric(majnum['Tranche_Debut'])
+    majnum['Tranche_Fin'] = pd.to_numeric(majnum['Tranche_Fin'])
 
     # Détecter l'encodage du fichier
     with open(identifiants_ce_csv, 'rb') as f:
@@ -92,12 +110,15 @@ def enrichir(df:DataFrame,
 
     # Lire le fichier avec l'encodage détecté
     encoding = result['encoding']
-    identifiants_CE = pd.read_csv(identifiants_ce_csv, delimiter=';', encoding=encoding, dtype=str)
+    identifiants_ce = pd.read_csv(identifiants_ce_csv, delimiter=';', encoding=encoding, dtype=str)
 
     df['operateur_arcep'] = ""
 
     # df['EMETTEUR'] = df['EMETTEUR'].replace('nan', '')
     for i, row in df.iterrows():
+        if i % 1000 == 0:
+            observateur(i, nombre_lignes+1)
+
         # extraction de la date
         date_full = row['DATE_SIGNALEMENT']
         df.at[i, 'date_requalifiee'] = date_full[:10]
@@ -118,7 +139,7 @@ def enrichir(df:DataFrame,
                 print(f" - numero nettoyé = {numero} - typologie : {typologie_numero(numero)}")
 
                 # identificaiton opérateur
-                operateur = trouver_operateur(numero, majnum, identifiants_CE)
+                operateur = trouver_operateur(numero, majnum, identifiants_ce)
                 print(f'Opérateur trouve : {operateur}')
                 df.at[i, 'operateur_arcep'] = operateur
             elif emetteur.lower() in oadc_list:
@@ -146,8 +167,8 @@ def enrichir(df:DataFrame,
                 df.at[i, 'rebond_nettoye'] = numero_rebond
                 df.at[i, 'typologie_rebond'] = typologie_rebond
                 if avec_arcep_rebond:
-                    operateur = trouver_operateur(numero_rebond, majnum, identifiants_CE)
-                    df.at[i, 'opr arcep rebond'] = operateur
+                    operateur = trouver_operateur(numero_rebond, majnum, identifiants_ce)
+                    df.at[i, 'opr_arcep_rebond'] = operateur
                 print(f" - rebond nettoyé = {numero_rebond} - typologie : {typologie_rebond}")
 
         # print(row['URL_REBOND_SIGNALE'])
@@ -188,6 +209,7 @@ def enrichir(df:DataFrame,
                     df.at[i, 'phishing'] = 0
                     df.at[i, 'score_smishing'] = 0
 
+    observateur(nombre_lignes, nombre_lignes)
     # Inform the user
     return df
 

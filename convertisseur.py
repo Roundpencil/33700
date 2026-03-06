@@ -9,10 +9,12 @@ import unicodedata
 from pandas import DataFrame
 
 
+#todo core :
+#  si export Excel, remettre les bonnes colonnes dnas l'ordre
+
 # todo QOL:
 #  vérifier au lancement si on est dans les nouvelles lignes:
 #   si oui afficher message : voulez-vous refaire traitement alors qu'un export suffit
-#  ajouter une barre de progression et un observatoire tous les 1000 lignes ui estime l'heure de fin
 
 #todo, moins urgent :
 #  ajouter une fonction + GUI pour faire voiture balais sur la base à postériori de la génération (traitements non effectués) + proposer de faire tourner pendant X heures pour éviter boucle infinie

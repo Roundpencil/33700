@@ -1,5 +1,6 @@
 import argparse
 import json
+import threading
 import traceback
 from datetime import datetime
 from tkinter import messagebox
@@ -8,6 +9,7 @@ import pickle
 
 import database33700
 from GUI_parametres import print_gui
+from GUI_progression import FenetreProgression
 from convertisseur import enrichir, charger_source_dans_dataframe, exporter_df_vers_excel, \
     reordonner_colonnes_df_pour_export
 
@@ -50,15 +52,15 @@ def charger_derniere_config(args_a_enrichir):
             args_a_enrichir.dossier_sortie = default_dir
     return args_a_enrichir
 
-def sauver_config(args):
+def sauver_config(args_to_sava):
     config_out = {
-        "dossier_sortie": args.dossier_sortie,
-        "db_path": args.db_path,
-        "ajouter_operateurs" : args.ajouter_operateurs,
-        "score_phising" : args.score_phising,
-        "analyser_si_isa": args.analyser_si_isa,
-        "format_etendu": args.format_etendu,
-        "contenu_xls": args.contenu_xls
+        "dossier_sortie": args_to_sava.dossier_sortie,
+        "db_path": args_to_sava.db_path,
+        "ajouter_operateurs" : args_to_sava.ajouter_operateurs,
+        "score_phising" : args_to_sava.score_phising,
+        "analyser_si_isa": args_to_sava.analyser_si_isa,
+        "format_etendu": args_to_sava.format_etendu,
+        "contenu_xls": args_to_sava.contenu_xls
     }
 
     with (open(CONFIG_FILE, "w", encoding="utf-8") as f):
@@ -154,40 +156,104 @@ if __name__ == '__main__':
         print("Pré-traitement du fichier d'entrée réussi. \n Début de l'enrichissement")
 
         debut_conversion = datetime.now()
-        df_enrichie = enrichir(df,
-                               avec_arcep_rebond=args.ajouter_operateurs,
-                               analyser_si_isa=args.analyser_si_isa,
-                               format_etendu=args.format_etendu,
-                               calculer_phishing=args.score_phising)
-        fin_conversion = datetime.now()
+        # code avant GUI
+        # df_enrichie = enrichir(df,
+        #                        avec_arcep_rebond=args.ajouter_operateurs,
+        #                        analyser_si_isa=args.analyser_si_isa,
+        #                        format_etendu=args.format_etendu,
+        #                        calculer_phishing=args.score_phising,
+        #                        observateur=fenetre_progression.observateur)
 
-        print("Fin de l'enrichissement des donnéees.")
+        # code après GUI
+        fenetre_progression = FenetreProgression()
 
-        if len(args.db_path) > 1:
-            print("Début de l'insertion dans la base de données.")
-            database33700.exporter_vers_db(db_path=args.db_path,
-                                           noms_fichier=[args.fichier_entree],
-                                           dfs=[df_enrichie])
-            print("Données enregistrées dans la base de donnée.")
-        else:
-            print("Pas de base de donnée spécifiée en entrée")
 
-        print("Exportation vers Excel en cours.")
+        def travail():
+            try:
+                df_enrichie = enrichir(
+                    df,
+                    avec_arcep_rebond=args.ajouter_operateurs,
+                    analyser_si_isa=args.analyser_si_isa,
+                    format_etendu=args.format_etendu,
+                    calculer_phishing=args.score_phising,
+                    observateur=fenetre_progression.observateur,
+                )
+                # fenetre_progression.notifier_fin(resultat)
+                fin_conversion = datetime.now()
 
-        if args.contenu_xls == 'nouveaux':
-            df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
-            exporter_df_vers_excel(df_enrichie, args.fichier_entree, args.dossier_sortie)
-        elif args.contenu_xls == 'complet':
-            df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
-            database33700.exporter_base_vers_excel(db_path=args.db_path,
-                                                   filepath=args.fichier_entree,
-                                                   outdir = args.dossier_sortie)
+                print("Fin de l'enrichissement des donnéees.")
 
-        messagebox.showinfo("Succès", f"Conversion réussie! \n"
-                                      f"durée de la conversion : {fin_conversion - debut_conversion}")
+                if len(args.db_path) > 1:
+                    print("Début de l'insertion dans la base de données.")
+                    fenetre_progression.set_status("Début de l'insertion dans la base de données.")
+                    database33700.exporter_vers_db(db_path=args.db_path,
+                                                   noms_fichier=[args.fichier_entree],
+                                                   dfs=[df_enrichie])
+                    print("Données enregistrées dans la base de donnée.")
+                else:
+                    print("Pas de base de donnée spécifiée en entrée")
+
+                print("Exportation vers Excel en cours.")
+                fenetre_progression.set_status("Exportation vers Excel en cours...")
+
+                if args.contenu_xls == 'nouveaux':
+                    df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
+                    exporter_df_vers_excel(df_enrichie, args.fichier_entree, args.dossier_sortie)
+                elif args.contenu_xls == 'complet':
+                    # todo : remettre les colonnes dans l'ordre avant export (code actuel ne fait rien)
+                    # todo : nommer différemment les fichier issus de la db
+                    df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
+                    database33700.exporter_base_vers_excel(db_path=args.db_path,
+                                                           filepath=args.fichier_entree,
+                                                           outdir=args.dossier_sortie)
+                fenetre_progression.done()
+
+                messagebox.showinfo("Succès", f"Conversion réussie! \n"
+                                              f"durée de la conversion : {fin_conversion - debut_conversion}")
+
+            except Exception as exc:
+                messagebox.showerror(
+                    "Erreur inattendue",
+                    f"Une erreur inattendue est survenue :\n{exc}"
+                )
+                traceback.print_exception(exc)
+
+        thread = threading.Thread(target=travail, daemon=True)
+        thread.start()
+
+        fenetre_progression.run()
+
+        # déporté dans le thread
+        # fin_conversion = datetime.now()
+        #
+        # print("Fin de l'enrichissement des donnéees.")
+        #
+        # if len(args.db_path) > 1:
+        #     print("Début de l'insertion dans la base de données.")
+        #     database33700.exporter_vers_db(db_path=args.db_path,
+        #                                    noms_fichier=[args.fichier_entree],
+        #                                    dfs=[df_enrichie])
+        #     print("Données enregistrées dans la base de donnée.")
+        # else:
+        #     print("Pas de base de donnée spécifiée en entrée")
+        #
+        # print("Exportation vers Excel en cours.")
+        #
+        # if args.contenu_xls == 'nouveaux':
+        #     df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
+        #     exporter_df_vers_excel(df_enrichie, args.fichier_entree, args.dossier_sortie)
+        # elif args.contenu_xls == 'complet':
+        #     df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
+        #     database33700.exporter_base_vers_excel(db_path=args.db_path,
+        #                                            filepath=args.fichier_entree,
+        #                                            outdir = args.dossier_sortie)
+
+        # messagebox.showinfo("Succès", f"Conversion réussie! \n"
+        #                               f"durée de la conversion : {fin_conversion - debut_conversion}")
 
     except ValueError as e:
         messagebox.showerror("Erreur", str(e))
+        traceback.print_exception(e)
 
     except Exception as e:
         messagebox.showerror(

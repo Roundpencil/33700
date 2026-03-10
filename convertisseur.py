@@ -10,6 +10,8 @@ from pandas import DataFrame
 import requests
 from pathlib import Path
 
+# todo core : ajouter focntion évaluation pour rebond sur unméro téléphone
+
 # todo QOL:
 #  vérifier au lancement si on est dans les nouvelles lignes:
 #   si oui afficher message : voulez-vous refaire traitement alors qu'un export suffit

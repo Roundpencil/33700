@@ -5,6 +5,8 @@ from datetime import datetime
 from openpyxl import Workbook
 
 from convertisseur import construire_ordre_colonnes_disponibles
+from pathlib import Path
+from datetime import datetime
 
 
 def exporter_vers_db(
@@ -196,7 +198,13 @@ def exporter_vers_db(
 #
 #     print(f"Export terminé → {output_path}")
 
-def exporter_base_vers_excel(db_path, outdir, filepath, max_rows=1_000_000):
+def creer_chemin_export_excel(outdir: str | Path) -> Path:
+    date_str = datetime.now().strftime("%Y%m%d")
+    nom_fichier = f"{date_str} - export base 33700.xlsx"
+    return Path(outdir) / nom_fichier
+
+
+def exporter_base_vers_excel(db_path, output_path, max_rows=1_000_000):
     table = "base_donnees"
     fetch_batch = 10000
 
@@ -264,10 +272,6 @@ def exporter_base_vers_excel(db_path, outdir, filepath, max_rows=1_000_000):
         for row in batch:
             ws.append(row)
 
-    output_path = os.path.join(
-        outdir,
-        os.path.basename(filepath).split('.')[0] + '.xlsx'
-    )
     wb.save(output_path)
 
     conn.close()

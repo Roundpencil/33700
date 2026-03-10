@@ -213,11 +213,9 @@ if __name__ == '__main__':
                     df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
                     exporter_df_vers_excel(df_enrichie, args.fichier_entree, args.dossier_sortie)
                 elif args.contenu_xls == 'complet':
-                    # todo : nommer différemment les fichier issus de la db
-                    # df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
+                    chemin_excel = database33700.creer_chemin_export_excel(args.dossier_sortie)
                     database33700.exporter_base_vers_excel(db_path=args.db_path,
-                                                           filepath=args.fichier_entree,
-                                                           outdir=args.dossier_sortie)
+                                                           output_path = chemin_excel)
                 fenetre_progression.done()
 
                 messagebox.showinfo("Succès", f"Conversion réussie! \n"

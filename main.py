@@ -202,9 +202,8 @@ if __name__ == '__main__':
                     df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
                     exporter_df_vers_excel(df_enrichie, args.fichier_entree, args.dossier_sortie)
                 elif args.contenu_xls == 'complet':
-                    # todo : remettre les colonnes dans l'ordre avant export (code actuel ne fait rien)
                     # todo : nommer différemment les fichier issus de la db
-                    df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
+                    # df_enrichie = reordonner_colonnes_df_pour_export(df_enrichie)
                     database33700.exporter_base_vers_excel(db_path=args.db_path,
                                                            filepath=args.fichier_entree,
                                                            outdir=args.dossier_sortie)

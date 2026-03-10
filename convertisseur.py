@@ -235,26 +235,71 @@ def exporter_df_vers_excel(df: DataFrame, filepath, outdir):
     df.to_excel(outfile, index=False, engine='openpyxl')
 
 
-def reordonner_colonnes_df_pour_export(df: DataFrame) -> DataFrame:
-    # changer d'ordre des colonnes
-    column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
-                    'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'date_requalifiee', 'expediteur_nettoye',
-                    'typologie_expediteur', 'operateur_arcep', 'typologie_rebond', 'categorie_no_cible',
-                    'categorie_no_cible', 'mois', 'phishing', 'mots_clefs', 'score_smishing', 'tous_les_mots_clefs',
-                    'DATE_RECEPTION',
-                    'MOIS_RECEPTION',
-                    'ANALYSE_STOP', 'TYPE_EMETTEUR']
+# def reordonner_colonnes_df_pour_export(df: DataFrame) -> DataFrame:
+#     # changer d'ordre des colonnes
+#     column_order = ['DATE_SIGNALEMENT', 'MESSAGE', 'EMETTEUR', 'ALIAS_SIGNALANT', 'NUMERO_REBOND_SIGNAL',
+#                     'OPERATEUR_SIGNALANT', 'URL_REBOND_SIGNALE', 'date_requalifiee', 'expediteur_nettoye',
+#                     'typologie_expediteur', 'operateur_arcep', 'typologie_rebond', 'categorie_no_cible',
+#                     'categorie_no_cible', 'mois', 'phishing', 'mots_clefs', 'score_smishing', 'tous_les_mots_clefs',
+#                     'DATE_RECEPTION',
+#                     'MOIS_RECEPTION',
+#                     'ANALYSE_STOP', 'TYPE_EMETTEUR']
+#
+#     # Check if all columns in column_order are present in df.columns
+#     if set(column_order).issubset(df.columns):
+#         remaining_columns = [col for col in df.columns if col not in column_order]
+#         new_order = column_order + remaining_columns
+#         df = df[new_order]
+#     else:
+#         missing = set(column_order) - set(df.columns)
+#         print(f"Impossible de préparer les colonnes pour l'export, certaines colonnes nécessaires sont manquantes \n"
+#               f"{', '.join(missing)}")
+#     return df
+def get_column_order():
+    return [
+        'DATE_SIGNALEMENT',
+        'MESSAGE',
+        'EMETTEUR',
+        'ALIAS_SIGNALANT',
+        'NUMERO_REBOND_SIGNAL',
+        'OPERATEUR_SIGNALANT',
+        'URL_REBOND_SIGNALE',
+        'date_requalifiee',
+        'expediteur_nettoye',
+        'typologie_expediteur',
+        'operateur_arcep',
+        'typologie_rebond',
+        'categorie_no_cible',
+        'mois',
+        'phishing',
+        'mots_clefs',
+        'score_smishing',
+        'tous_les_mots_clefs',
+        'DATE_RECEPTION',
+        'MOIS_RECEPTION',
+        'ANALYSE_STOP',
+        'TYPE_EMETTEUR'
+    ]
 
-    # Check if all columns in column_order are present in df.columns
-    if set(column_order).issubset(df.columns):
-        remaining_columns = [col for col in df.columns if col not in column_order]
-        new_order = column_order + remaining_columns
-        df = df[new_order]
-    else:
-        missing = set(column_order) - set(df.columns)
-        print(f"Impossible de préparer les colonnes pour l'export, certaines colonnes nécessaires sont manquantes \n"
-              f"{', '.join(missing)}")
-    return df
+
+def construire_ordre_colonnes_disponibles(colonnes_disponibles):
+    """
+    Retourne les colonnes dans l'ordre souhaité, en ajoutant à la fin
+    les colonnes restantes non prévues dans l'ordre standard.
+    """
+    column_order = get_column_order()
+
+    colonnes_disponibles = list(colonnes_disponibles)
+
+    colonnes_ordonnees = [col for col in column_order if col in colonnes_disponibles]
+    colonnes_restantes = [col for col in colonnes_disponibles if col not in colonnes_ordonnees]
+
+    return colonnes_ordonnees + colonnes_restantes
+
+
+def reordonner_colonnes_df_pour_export(df: DataFrame) -> DataFrame:
+    new_order = construire_ordre_colonnes_disponibles(df.columns)
+    return df[new_order]
 
 
 def charger_source_dans_dataframe(filepath) -> DataFrame:

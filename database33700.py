@@ -4,10 +4,13 @@ from pandas import DataFrame
 from datetime import datetime
 from openpyxl import Workbook
 
+from convertisseur import construire_ordre_colonnes_disponibles
+
+
 def exporter_vers_db(
-    db_path: str,
-    dfs: list[DataFrame],
-    noms_fichier: list[str],
+        db_path: str,
+        dfs: list[DataFrame],
+        noms_fichier: list[str],
 ) -> dict:
     """
     Pour chaque (df, nom_fichier), insère df dans base_donnees seulement si
@@ -123,6 +126,76 @@ def exporter_vers_db(
 
     return bilan
 
+
+# def exporter_base_vers_excel(db_path, outdir, filepath, max_rows=1_000_000):
+#     table = "base_donnees"
+#     fetch_batch = 10000
+#
+#     conn = sqlite3.connect(db_path)
+#     cur = conn.cursor()
+#
+#     # 1️⃣ compter les lignes par mois
+#     cur.execute(f"""
+#         SELECT mois, COUNT(*) AS n
+#         FROM {table}
+#         WHERE mois IS NOT NULL AND TRIM(mois) <> ''
+#         GROUP BY mois
+#         ORDER BY mois DESC
+#     """)
+#
+#     rows = cur.fetchall()
+#
+#     selected_months = []
+#     total = 0
+#
+#     for mois, n in rows:
+#         if total + n > max_rows:
+#             break
+#         selected_months.append(mois)
+#         total += n
+#
+#     if not selected_months:
+#         print("Aucun mois sélectionné.")
+#         conn.close()
+#         return
+#
+#     print("Mois retenus :", selected_months)
+#     print("Total lignes :", total)
+#
+#     # 2️⃣ requête pour récupérer les données
+#     placeholders = ",".join(["?"] * len(selected_months))
+#
+#     query = f"""
+#         SELECT *
+#         FROM {table}
+#         WHERE mois IN ({placeholders})
+#         ORDER BY mois DESC, id ASC
+#     """
+#
+#     cur.execute(query, selected_months)
+#
+#     # 3️⃣ création Excel (mode streaming)
+#     wb = Workbook(write_only=True)
+#     ws = wb.create_sheet("export")
+#
+#     # en-têtes
+#     columns = [d[0] for d in cur.description]
+#     ws.append(columns)
+#
+#     # écriture par batch
+#     while True:
+#         batch = cur.fetchmany(fetch_batch)
+#         if not batch:
+#             break
+#         for row in batch:
+#             ws.append(row)
+#     output_path = os.path.join(outdir, os.path.basename(filepath).split('.')[0] + '.xlsx')
+#     wb.save(output_path)
+#
+#     conn.close()
+#
+#     print(f"Export terminé → {output_path}")
+
 def exporter_base_vers_excel(db_path, outdir, filepath, max_rows=1_000_000):
     table = "base_donnees"
     fetch_batch = 10000
@@ -130,7 +203,7 @@ def exporter_base_vers_excel(db_path, outdir, filepath, max_rows=1_000_000):
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
 
-    # 1️⃣ compter les lignes par mois
+    # 1) compter les lignes par mois
     cur.execute(f"""
         SELECT mois, COUNT(*) AS n
         FROM {table}
@@ -158,11 +231,17 @@ def exporter_base_vers_excel(db_path, outdir, filepath, max_rows=1_000_000):
     print("Mois retenus :", selected_months)
     print("Total lignes :", total)
 
-    # 2️⃣ requête pour récupérer les données
+    # 2) récupérer la liste réelle des colonnes de la table
+    cur.execute(f"PRAGMA table_info({table})")
+    table_columns = [row[1] for row in cur.fetchall()]  # row[1] = nom de colonne
+
+    ordered_columns = construire_ordre_colonnes_disponibles(table_columns)
+
     placeholders = ",".join(["?"] * len(selected_months))
+    cols_sql = ", ".join(f'"{col}"' for col in ordered_columns)
 
     query = f"""
-        SELECT *
+        SELECT {cols_sql}
         FROM {table}
         WHERE mois IN ({placeholders})
         ORDER BY mois DESC, id ASC
@@ -170,13 +249,12 @@ def exporter_base_vers_excel(db_path, outdir, filepath, max_rows=1_000_000):
 
     cur.execute(query, selected_months)
 
-    # 3️⃣ création Excel (mode streaming)
+    # 3) création Excel (mode streaming)
     wb = Workbook(write_only=True)
     ws = wb.create_sheet("export")
 
-    # en-têtes
-    columns = [d[0] for d in cur.description]
-    ws.append(columns)
+    # en-têtes dans le bon ordre
+    ws.append(ordered_columns)
 
     # écriture par batch
     while True:
@@ -185,7 +263,11 @@ def exporter_base_vers_excel(db_path, outdir, filepath, max_rows=1_000_000):
             break
         for row in batch:
             ws.append(row)
-    output_path = os.path.join(outdir, os.path.basename(filepath).split('.')[0] + '.xlsx')
+
+    output_path = os.path.join(
+        outdir,
+        os.path.basename(filepath).split('.')[0] + '.xlsx'
+    )
     wb.save(output_path)
 
     conn.close()

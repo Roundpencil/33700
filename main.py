@@ -11,9 +11,10 @@ import database33700
 from GUI_parametres import print_gui
 from GUI_progression import FenetreProgression
 from convertisseur import enrichir, charger_source_dans_dataframe, exporter_df_vers_excel, \
-    reordonner_colonnes_df_pour_export
+    reordonner_colonnes_df_pour_export, download_csv
 
 CONFIG_FILE = "config.json"
+
 
 def charger_derniere_config(args_a_enrichir):
     # est-ce que 'jai un fichier json?
@@ -52,12 +53,13 @@ def charger_derniere_config(args_a_enrichir):
             args_a_enrichir.dossier_sortie = default_dir
     return args_a_enrichir
 
+
 def sauver_config(args_to_sava):
     config_out = {
         "dossier_sortie": args_to_sava.dossier_sortie,
         "db_path": args_to_sava.db_path,
-        "ajouter_operateurs" : args_to_sava.ajouter_operateurs,
-        "score_phising" : args_to_sava.score_phising,
+        "ajouter_operateurs": args_to_sava.ajouter_operateurs,
+        "score_phising": args_to_sava.score_phising,
         "analyser_si_isa": args_to_sava.analyser_si_isa,
         "format_etendu": args_to_sava.format_etendu,
         "contenu_xls": args_to_sava.contenu_xls
@@ -65,6 +67,7 @@ def sauver_config(args_to_sava):
 
     with (open(CONFIG_FILE, "w", encoding="utf-8") as f):
         json.dump(config_out, f, ensure_ascii=False, indent=2)
+
 
 # def save_last_dir(path):
 #     with open("last_dir.pkl", "wb") as f:
@@ -170,7 +173,15 @@ if __name__ == '__main__':
 
         def travail():
             try:
-                fenetre_progression.set_status("Enrichissement des données source", indeter=False)
+                fenetre_progression.set_status("Téléchargement du fichier identifiants_CE depuis l'Arcep...",
+                                               indeter=False)
+                download_csv("https://extranet.arcep.fr/uploads/identifiants_CE.csv")
+
+                fenetre_progression.set_status("Téléchargement du fichier MAJNUM depuis l'Arcep...",
+                                               indeter=False)
+                download_csv("https://extranet.arcep.fr/uploads/MAJNUM.csv")
+
+                fenetre_progression.set_status("Enrichissement des données source...", indeter=False)
                 df_enrichie = enrichir(
                     df,
                     avec_arcep_rebond=args.ajouter_operateurs,
@@ -218,6 +229,7 @@ if __name__ == '__main__':
                     f"Une erreur inattendue est survenue :\n{exc}"
                 )
                 traceback.print_exception(exc)
+
 
         thread = threading.Thread(target=travail, daemon=True)
         thread.start()

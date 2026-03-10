@@ -7,28 +7,40 @@ import re
 
 import unicodedata
 from pandas import DataFrame
-
-
-# todo core :
-#  si export Excel, remettre les bonnes colonnes dnas l'ordre
+import requests
+from pathlib import Path
 
 # todo QOL:
 #  vérifier au lancement si on est dans les nouvelles lignes:
 #   si oui afficher message : voulez-vous refaire traitement alors qu'un export suffit
+#  vérifier si on a vraiment besoin de la colonne id ou si l'heure du signalement suffit
 
 # todo, moins urgent :
 #  ajouter une fonction + GUI pour faire voiture balais sur la base à postériori de la génération (traitements non effectués) + proposer de faire tourner pendant X heures pour éviter boucle infinie
 #  ajouter l'ajout des pages avec les données calculées / chiffres automatiquement dans un onlget de l'excel (voire les graphes si on peut faire cela...)
 #  permettre de relancer un calcul smishing / opérateurs qui écrase l'ancien
 #  ajouter options pour générer rapport sur d'autre dates que les 3 derniers mois
-#  ajouter le dl du dernier fichier CE : https://extranet.arcep.fr/uploads/identifiants_CE.csv
-#  ajouter le dl du dernier majnum : https://extranet.arcep.fr/uploads/MAJNUM.csv
 
 # todo :
 #  ajouter GUI pour réquisition
 
 def observateur_basique(iteration, iterations):
     print(f"Itération {iteration} sur {iterations}")
+
+
+def download_csv(url: str):
+    filename = url.split("/")[-1]  # nom du fichier depuis l'URL
+    path = Path.cwd() / filename
+
+    print(f"path = {path}")
+
+    response = requests.get(url)
+    response.raise_for_status()  # erreur si téléchargement échoue
+
+    with open(path, "wb") as f:
+        f.write(response.content)
+
+    print(f"Fichier téléchargé : {path}")
 
 
 def enrichir(df: DataFrame,

@@ -9,14 +9,14 @@ import unicodedata
 from pandas import DataFrame
 
 
-#todo core :
+# todo core :
 #  si export Excel, remettre les bonnes colonnes dnas l'ordre
 
 # todo QOL:
 #  vérifier au lancement si on est dans les nouvelles lignes:
 #   si oui afficher message : voulez-vous refaire traitement alors qu'un export suffit
 
-#todo, moins urgent :
+# todo, moins urgent :
 #  ajouter une fonction + GUI pour faire voiture balais sur la base à postériori de la génération (traitements non effectués) + proposer de faire tourner pendant X heures pour éviter boucle infinie
 #  ajouter l'ajout des pages avec les données calculées / chiffres automatiquement dans un onlget de l'excel (voire les graphes si on peut faire cela...)
 #  permettre de relancer un calcul smishing / opérateurs qui écrase l'ancien
@@ -30,12 +30,12 @@ from pandas import DataFrame
 def observateur_basique(iteration, iterations):
     print(f"Itération {iteration} sur {iterations}")
 
-def enrichir(df:DataFrame,
+
+def enrichir(df: DataFrame,
              avec_arcep_rebond=True, calculer_phishing=False, analyser_si_isa=False, format_etendu=False,
              liste_oadc_csv='liste_oadc.csv', oadc_sensibles_csv='oadc_sensibles.csv',
              identifiants_ce_csv='identifiants_ce.csv', mots_clefs_phising_csv="mots_clefs_phising.csv",
-             tous_mots_phishing=False, majnum_csv='MAJNUM.csv', observateur = observateur_basique):
-
+             tous_mots_phishing=False, majnum_csv='MAJNUM.csv', observateur=observateur_basique):
     nombre_lignes = len(df)
     # Charger la liste OADC
     try:
@@ -84,7 +84,7 @@ def enrichir(df:DataFrame,
     print("liste mots clefs phihising : ")
     print(liste_mots_clefs_phising)
 
-    #créer un code traitement
+    # créer un code traitement
     code_traitement = ''
     code_traitement += 'O' if avec_arcep_rebond else ''
     code_traitement += 'P' if calculer_phishing else ''
@@ -94,7 +94,7 @@ def enrichir(df:DataFrame,
 
     # identification des opérateurs de l'éxpéditeur
     # majnum = pd.read_excel('MAJNUM.xls')
-    
+
     # Détecter l'encodage du fichier
     with open(majnum_csv, 'rb') as f:
         result = chardet.detect(f.read())
@@ -119,7 +119,7 @@ def enrichir(df:DataFrame,
     # df['EMETTEUR'] = df['EMETTEUR'].replace('nan', '')
     for i, row in df.iterrows():
         if i % 1000 == 0:
-            observateur(i, nombre_lignes+1)
+            observateur(i, nombre_lignes + 1)
 
         # extraction de la date
         date_full = row['DATE_SIGNALEMENT']
@@ -215,6 +215,7 @@ def enrichir(df:DataFrame,
     # Inform the user
     return df
 
+
 def supprimer_accents_et_lower(texte):
     """
     Supprime les accents d'une chaîne de caractères.
@@ -225,6 +226,7 @@ def supprimer_accents_et_lower(texte):
     texte = unicodedata.normalize("NFD", texte)
     texte = "".join(c for c in texte if unicodedata.category(c) != "Mn")
     return texte.lower()
+
 
 def exporter_df_vers_excel(df: DataFrame, filepath, outdir):
     # Save to Excel

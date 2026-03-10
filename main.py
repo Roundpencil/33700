@@ -170,6 +170,7 @@ if __name__ == '__main__':
 
         def travail():
             try:
+                fenetre_progression.set_status("Enrichissement des données source", indeter=False)
                 df_enrichie = enrichir(
                     df,
                     avec_arcep_rebond=args.ajouter_operateurs,
@@ -182,9 +183,10 @@ if __name__ == '__main__':
                 fin_conversion = datetime.now()
 
                 print("Fin de l'enrichissement des donnéees.")
+                fenetre_progression.set_status("Fin de l'enrichissement des données.", indeter=False)
 
                 if len(args.db_path) > 1:
-                    print("Début de l'insertion dans la base de données.")
+                    print("Insertion dans la base de données.")
                     fenetre_progression.set_status("Début de l'insertion dans la base de données.")
                     database33700.exporter_vers_db(db_path=args.db_path,
                                                    noms_fichier=[args.fichier_entree],

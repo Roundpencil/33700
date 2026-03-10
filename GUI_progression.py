@@ -5,6 +5,7 @@ import time
 from tkinter.ttk import Progressbar
 from datetime import datetime, timedelta
 
+
 class FenetreProgression:
 
     def __init__(self):
@@ -14,6 +15,7 @@ class FenetreProgression:
 
         self.progress_bar_var = tk.DoubleVar(value=0)
         self.heure_de_fin_var = tk.StringVar()
+        self.etape_var = tk.StringVar()
         self.temps_restant_var = tk.StringVar()
         self.duree_var = tk.StringVar()
 
@@ -22,33 +24,41 @@ class FenetreProgression:
 
         self.start_time = datetime.now()
 
+        tk.Label(self.root, text="Etape en cours :").grid(
+            row=00, column=0, padx=5, pady=10, sticky="e"
+        )
+
+        tk.Label(self.root, textvariable=self.etape_var).grid(
+            row=00, column=1, pady=10, sticky="w"
+        )
+
         self.progressbar = Progressbar(self.root, orient="horizontal", length=300, mode='determinate',
                                        variable=self.progress_bar_var)
 
-        self.progressbar.grid(row=0, column=0, columnspan=3, pady=15, sticky="nsew", padx=30)
+        self.progressbar.grid(row=5, column=0, columnspan=3, pady=15, sticky="nsew", padx=30)
 
         tk.Label(self.root, text="Durée estimée :").grid(
-            row=1, column=0, padx=5, pady=10, sticky="e"
+            row=10, column=0, padx=5, pady=10, sticky="e"
         )
 
         tk.Label(self.root, textvariable=self.duree_var).grid(
-            row=1, column=1, pady=10, sticky="w"
+            row=10, column=1, pady=10, sticky="w"
         )
 
         tk.Label(self.root, text="Temps restant :").grid(
-            row=2, column=0, padx=5, pady=10, sticky="e"
+            row=20, column=0, padx=5, pady=10, sticky="e"
         )
 
         tk.Label(self.root, textvariable=self.temps_restant_var).grid(
-            row=2, column=1, pady=10, sticky="w"
+            row=20, column=1, pady=10, sticky="w"
         )
 
         tk.Label(self.root, text="Heure de fin estimée :").grid(
-            row=3, column=0, padx=5, pady=10, sticky="e"
+            row=30, column=0, padx=5, pady=10, sticky="e"
         )
 
         tk.Label(self.root, textvariable=self.heure_de_fin_var).grid(
-            row=3, column=1, pady=10, sticky="w"
+            row=30, column=1, pady=10, sticky="w"
         )
 
         # bouton fermer (désactivé au départ)
@@ -58,7 +68,7 @@ class FenetreProgression:
             state="disabled",
             command=self.root.destroy
         )
-        self.bouton_fermer.grid(row=4, column=0, columnspan=3, pady=20)
+        self.bouton_fermer.grid(row=40, column=0, columnspan=3, pady=20)
 
     def update_estimated_times(self, iteration, iterations):
         elapsed_time = datetime.now() - self.start_time
@@ -109,7 +119,7 @@ class FenetreProgression:
     #         self.bouton_fermer.config(state="normal")
 
     def update_progress_bar(self, iteration, iterations):
-        self.progress_bar_var.set((iteration/iterations)*100)  # 50 %
+        self.progress_bar_var.set((iteration / iterations) * 100)  # 50 %
 
     def observateur(self, iteration, iterations):
         self.update_progress_bar(iteration, iterations)
@@ -136,15 +146,18 @@ class FenetreProgression:
     #     # self._queue.put(("erreur", exc))
     #     self.resultat = None
 
-    def set_status(self, param):
-        self.root.title(param)
-        self.progressbar.config(mode="indeterminate")
-        self.progressbar.start(10)
+    def set_status(self, param, indeter=True):
+        # self.root.title(param)
+        self.etape_var.set(param)
+        if indeter:
+            self.progressbar.config(mode="indeterminate")
+            self.progressbar.start(10)
 
     def done(self):
         self.bouton_fermer.config(state="normal")
         self.progressbar.stop()
-        self.root.title("Opération terminée avec succès")
+        # self.root.title("Opération terminée avec succès")
+        self.etape_var.set("Opération terminée avec succès")
 
 
 if __name__ == "__main__":
